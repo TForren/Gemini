@@ -15,3 +15,6 @@ E:\Important Stuff\udel\CISC360\VisualStudio_stuff\WindowsFormsApplication2\Wind
 C:\Users\T4\Source\Repos\Gemini\WindowsFormsApplication2\WindowsFormsApplication2\bin\Debug\WindowsFormsApplication2.exe.config
 C:\Users\T4\Source\Repos\Gemini\WindowsFormsApplication2\WindowsFormsApplication2\obj\Debug\WindowsFormsApplication2.exe
 C:\Users\T4\Source\Repos\Gemini\WindowsFormsApplication2\WindowsFormsApplication2\obj\Debug\WindowsFormsApplication2.pdb
+E:\Important Stuff\udel\CISC360\VisualStudio_stuff\GitTest\WindowsFormsApplication2\WindowsFormsApplication2\bin\Debug\WindowsFormsApplication2.exe.config
+E:\Important Stuff\udel\CISC360\VisualStudio_stuff\GitTest\WindowsFormsApplication2\WindowsFormsApplication2\obj\Debug\WindowsFormsApplication2.exe
+E:\Important Stuff\udel\CISC360\VisualStudio_stuff\GitTest\WindowsFormsApplication2\WindowsFormsApplication2\obj\Debug\WindowsFormsApplication2.pdb
