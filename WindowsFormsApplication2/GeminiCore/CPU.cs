@@ -12,6 +12,8 @@ namespace GeminiCore
     public class CPU
     {
         public int ACC { get; private set; }
+        public int A;
+        public int B;
 
         public CPU()
         {

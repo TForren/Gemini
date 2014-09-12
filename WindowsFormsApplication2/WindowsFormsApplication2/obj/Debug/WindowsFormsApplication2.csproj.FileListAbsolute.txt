@@ -12,3 +12,6 @@ c:\users\morecraf\documents\visual studio 2012\Projects\WindowsFormsApplication2
 E:\Important Stuff\udel\CISC360\VisualStudio_stuff\WindowsFormsApplication2\WindowsFormsApplication2\bin\Debug\WindowsFormsApplication2.exe.config
 E:\Important Stuff\udel\CISC360\VisualStudio_stuff\WindowsFormsApplication2\WindowsFormsApplication2\obj\Debug\WindowsFormsApplication2.exe
 E:\Important Stuff\udel\CISC360\VisualStudio_stuff\WindowsFormsApplication2\WindowsFormsApplication2\obj\Debug\WindowsFormsApplication2.pdb
+C:\Users\T4\Source\Repos\Gemini\WindowsFormsApplication2\WindowsFormsApplication2\bin\Debug\WindowsFormsApplication2.exe.config
+C:\Users\T4\Source\Repos\Gemini\WindowsFormsApplication2\WindowsFormsApplication2\obj\Debug\WindowsFormsApplication2.exe
+C:\Users\T4\Source\Repos\Gemini\WindowsFormsApplication2\WindowsFormsApplication2\obj\Debug\WindowsFormsApplication2.pdb
