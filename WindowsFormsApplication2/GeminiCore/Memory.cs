@@ -1,5 +1,6 @@
 ﻿/**
- * Seth Morecraft
+ * Teague Forren
+ * Johanna Jan
  */
 using System;
 using System.Collections.Generic;
