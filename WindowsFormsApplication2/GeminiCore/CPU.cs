@@ -16,9 +16,6 @@ namespace GeminiCore
         public int A;
         public int B;
 
-        public int C;
-        public int D;
-
         public CPU()
         {
             ACC = 0;

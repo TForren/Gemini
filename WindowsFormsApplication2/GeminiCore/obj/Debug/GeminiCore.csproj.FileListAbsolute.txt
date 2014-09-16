@@ -3,3 +3,8 @@ c:\users\morecraf\documents\visual studio 2012\Projects\WindowsFormsApplication2
 c:\users\morecraf\documents\visual studio 2012\Projects\WindowsFormsApplication2\GeminiCore\obj\Debug\GeminiCore.csprojResolveAssemblyReference.cache
 c:\users\morecraf\documents\visual studio 2012\Projects\WindowsFormsApplication2\GeminiCore\obj\Debug\GeminiCore.dll
 c:\users\morecraf\documents\visual studio 2012\Projects\WindowsFormsApplication2\GeminiCore\obj\Debug\GeminiCore.pdb
+C:\Users\T4\Source\Repos\Gemini\WindowsFormsApplication2\GeminiCore\bin\Debug\GeminiCore.dll
+C:\Users\T4\Source\Repos\Gemini\WindowsFormsApplication2\GeminiCore\bin\Debug\GeminiCore.pdb
+C:\Users\T4\Source\Repos\Gemini\WindowsFormsApplication2\GeminiCore\obj\Debug\GeminiCore.csprojResolveAssemblyReference.cache
+C:\Users\T4\Source\Repos\Gemini\WindowsFormsApplication2\GeminiCore\obj\Debug\GeminiCore.dll
+C:\Users\T4\Source\Repos\Gemini\WindowsFormsApplication2\GeminiCore\obj\Debug\GeminiCore.pdb
