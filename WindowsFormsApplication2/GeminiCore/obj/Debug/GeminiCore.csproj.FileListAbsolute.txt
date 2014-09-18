@@ -8,3 +8,8 @@ C:\Users\T4\Source\Repos\Gemini\WindowsFormsApplication2\GeminiCore\bin\Debug\Ge
 C:\Users\T4\Source\Repos\Gemini\WindowsFormsApplication2\GeminiCore\obj\Debug\GeminiCore.csprojResolveAssemblyReference.cache
 C:\Users\T4\Source\Repos\Gemini\WindowsFormsApplication2\GeminiCore\obj\Debug\GeminiCore.dll
 C:\Users\T4\Source\Repos\Gemini\WindowsFormsApplication2\GeminiCore\obj\Debug\GeminiCore.pdb
+E:\Important Stuff\udel\CISC360\VisualStudio_stuff\WindowsFormsApplication2\GeminiCore\bin\Debug\GeminiCore.dll
+E:\Important Stuff\udel\CISC360\VisualStudio_stuff\WindowsFormsApplication2\GeminiCore\bin\Debug\GeminiCore.pdb
+E:\Important Stuff\udel\CISC360\VisualStudio_stuff\WindowsFormsApplication2\GeminiCore\obj\Debug\GeminiCore.csprojResolveAssemblyReference.cache
+E:\Important Stuff\udel\CISC360\VisualStudio_stuff\WindowsFormsApplication2\GeminiCore\obj\Debug\GeminiCore.dll
+E:\Important Stuff\udel\CISC360\VisualStudio_stuff\WindowsFormsApplication2\GeminiCore\obj\Debug\GeminiCore.pdb

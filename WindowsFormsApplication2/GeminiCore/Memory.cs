@@ -12,5 +12,6 @@ namespace GeminiCore
 {
     public class Memory
     {
+        
     }
 }

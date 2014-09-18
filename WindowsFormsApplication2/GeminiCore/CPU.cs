@@ -13,7 +13,7 @@ namespace GeminiCore
     public class CPU
     {
         public int ACC { get; private set; }
-        public int A;
+        public int A = 546456; // test number
         public int B;
         public int Zero;
         public int One;

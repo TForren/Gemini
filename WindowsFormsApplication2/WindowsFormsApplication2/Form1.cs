@@ -25,7 +25,7 @@ namespace WindowsFormsApplication2
 
             InitializeComponent();
 
-            //Making the Acc labels transparent with the picturebox
+            //Making the Acc labels transparent with the picturebox background
             //Label1 = "ACC:"
             var pos = this.PointToScreen(label1.Location);
             pos = BackgroundPicBox.PointToClient(pos);
@@ -75,6 +75,14 @@ namespace WindowsFormsApplication2
         public void setCPUValuesToView()
         {
             this.accLabel.Text = this.myCPU.ACC.ToString();
+            this.ALabel.Text = this.myCPU.A.ToString();
+            this.BLabel.Text = this.myCPU.B.ToString();
+            this.PCLabel.Text = this.myCPU.PC.ToString();
+            this.MARLabel.Text = this.myCPU.MAR.ToString();
+            this.MDRLabel.Text = this.myCPU.MDR.ToString();
+            this.TEMPLabel.Text = this.myCPU.TEMP.ToString();
+            this.IRLabel.Text = this.myCPU.IR.ToString();
+            this.CCLabel.Text = this.myCPU.CC.ToString();
         }
 
         private void tableLayoutPanel1_Paint(object sender, PaintEventArgs e)
@@ -143,6 +151,21 @@ namespace WindowsFormsApplication2
         }
 
         private void label10_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void accLabel_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label12_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label15_Click(object sender, EventArgs e)
         {
 
         }
