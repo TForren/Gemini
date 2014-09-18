@@ -15,6 +15,14 @@ namespace GeminiCore
         public int ACC { get; private set; }
         public int A;
         public int B;
+        public int Zero;
+        public int One;
+        public int PC;
+        public int MAR;
+        public int MDR;
+        public int TEMP;
+        public int IR;
+        public int CC;
 
         public CPU()
         {

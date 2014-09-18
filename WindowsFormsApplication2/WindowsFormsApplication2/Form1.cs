@@ -25,6 +25,21 @@ namespace WindowsFormsApplication2
 
             InitializeComponent();
 
+            //Making the Acc labels transparent with the picturebox
+            //Label1 = "ACC:"
+            var pos = this.PointToScreen(label1.Location);
+            pos = BackgroundPicBox.PointToClient(pos);
+            label1.Parent = BackgroundPicBox;
+            label1.Location = pos;
+            label1.BackColor = Color.Transparent;
+            //AccLabel
+            var pos2 = this.PointToScreen(accLabel.Location);
+            pos2 = BackgroundPicBox.PointToClient(pos2);
+            accLabel.Parent = BackgroundPicBox;
+            accLabel.Location = pos2;
+            accLabel.BackColor = Color.Transparent;
+
+
 #if DEBUG
             loadFileButton.Text = "Load";
 #endif
@@ -92,6 +107,42 @@ namespace WindowsFormsApplication2
         }
 
         private void label3_Click_1(object sender, EventArgs e)
+        {
+
+        }
+
+        private void pictureBox1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void tableLayoutPanel1_Paint_1(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void label4_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label5_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label7_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label8_Click(object sender, EventArgs e)
+        {
+
+
+        }
+
+        private void label10_Click(object sender, EventArgs e)
         {
 
         }
