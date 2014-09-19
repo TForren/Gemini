@@ -33,6 +33,16 @@
             this.loadFileButton = new System.Windows.Forms.Button();
             this.nextInstructionButton = new System.Windows.Forms.Button();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.CCLabel = new System.Windows.Forms.Label();
+            this.IRLabel = new System.Windows.Forms.Label();
+            this.TEMPLabel = new System.Windows.Forms.Label();
+            this.MDRLabel = new System.Windows.Forms.Label();
+            this.MARLabel = new System.Windows.Forms.Label();
+            this.PCLabel = new System.Windows.Forms.Label();
+            this.OneLabel = new System.Windows.Forms.Label();
+            this.ZeroLabel = new System.Windows.Forms.Label();
+            this.BLabel = new System.Windows.Forms.Label();
+            this.ALabel = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.registerLabel = new System.Windows.Forms.Label();
             this.valueLabel = new System.Windows.Forms.Label();
@@ -47,16 +57,6 @@
             this.label11 = new System.Windows.Forms.Label();
             this.BackgroundPicBox = new System.Windows.Forms.PictureBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.ALabel = new System.Windows.Forms.Label();
-            this.BLabel = new System.Windows.Forms.Label();
-            this.ZeroLabel = new System.Windows.Forms.Label();
-            this.OneLabel = new System.Windows.Forms.Label();
-            this.PCLabel = new System.Windows.Forms.Label();
-            this.MARLabel = new System.Windows.Forms.Label();
-            this.MDRLabel = new System.Windows.Forms.Label();
-            this.TEMPLabel = new System.Windows.Forms.Label();
-            this.IRLabel = new System.Windows.Forms.Label();
-            this.CCLabel = new System.Windows.Forms.Label();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.BackgroundPicBox)).BeginInit();
             this.SuspendLayout();
@@ -144,9 +144,141 @@
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 33F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 16F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(205, 284);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(208, 284);
             this.tableLayoutPanel1.TabIndex = 4;
             this.tableLayoutPanel1.Paint += new System.Windows.Forms.PaintEventHandler(this.tableLayoutPanel1_Paint_1);
+            // 
+            // CCLabel
+            // 
+            this.CCLabel.AutoSize = true;
+            this.CCLabel.BackColor = System.Drawing.Color.Transparent;
+            this.CCLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12.25F);
+            this.CCLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
+            this.CCLabel.Location = new System.Drawing.Point(94, 235);
+            this.CCLabel.Name = "CCLabel";
+            this.CCLabel.Size = new System.Drawing.Size(98, 20);
+            this.CCLabel.TabIndex = 23;
+            this.CCLabel.Text = "0x00000000";
+            this.CCLabel.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            // 
+            // IRLabel
+            // 
+            this.IRLabel.AutoSize = true;
+            this.IRLabel.BackColor = System.Drawing.Color.Transparent;
+            this.IRLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12.25F);
+            this.IRLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
+            this.IRLabel.Location = new System.Drawing.Point(94, 210);
+            this.IRLabel.Name = "IRLabel";
+            this.IRLabel.Size = new System.Drawing.Size(103, 25);
+            this.IRLabel.TabIndex = 22;
+            this.IRLabel.Text = "- - - - - - - - - -";
+            this.IRLabel.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            // 
+            // TEMPLabel
+            // 
+            this.TEMPLabel.AutoSize = true;
+            this.TEMPLabel.BackColor = System.Drawing.Color.Transparent;
+            this.TEMPLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12.25F);
+            this.TEMPLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
+            this.TEMPLabel.Location = new System.Drawing.Point(94, 186);
+            this.TEMPLabel.Name = "TEMPLabel";
+            this.TEMPLabel.Size = new System.Drawing.Size(98, 20);
+            this.TEMPLabel.TabIndex = 21;
+            this.TEMPLabel.Text = "0x00000000";
+            this.TEMPLabel.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            // 
+            // MDRLabel
+            // 
+            this.MDRLabel.AutoSize = true;
+            this.MDRLabel.BackColor = System.Drawing.Color.Transparent;
+            this.MDRLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12.25F);
+            this.MDRLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
+            this.MDRLabel.Location = new System.Drawing.Point(94, 163);
+            this.MDRLabel.Name = "MDRLabel";
+            this.MDRLabel.Size = new System.Drawing.Size(98, 20);
+            this.MDRLabel.TabIndex = 20;
+            this.MDRLabel.Text = "0x00000000";
+            this.MDRLabel.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            // 
+            // MARLabel
+            // 
+            this.MARLabel.AutoSize = true;
+            this.MARLabel.BackColor = System.Drawing.Color.Transparent;
+            this.MARLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12.25F);
+            this.MARLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
+            this.MARLabel.Location = new System.Drawing.Point(94, 140);
+            this.MARLabel.Name = "MARLabel";
+            this.MARLabel.Size = new System.Drawing.Size(98, 20);
+            this.MARLabel.TabIndex = 19;
+            this.MARLabel.Text = "0x00000000";
+            this.MARLabel.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            // 
+            // PCLabel
+            // 
+            this.PCLabel.AutoSize = true;
+            this.PCLabel.BackColor = System.Drawing.Color.Transparent;
+            this.PCLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12.25F);
+            this.PCLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
+            this.PCLabel.Location = new System.Drawing.Point(94, 117);
+            this.PCLabel.Name = "PCLabel";
+            this.PCLabel.Size = new System.Drawing.Size(98, 20);
+            this.PCLabel.TabIndex = 18;
+            this.PCLabel.Text = "0x00000000";
+            this.PCLabel.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            // 
+            // OneLabel
+            // 
+            this.OneLabel.AutoSize = true;
+            this.OneLabel.BackColor = System.Drawing.Color.Transparent;
+            this.OneLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12.25F);
+            this.OneLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
+            this.OneLabel.Location = new System.Drawing.Point(94, 93);
+            this.OneLabel.Name = "OneLabel";
+            this.OneLabel.Size = new System.Drawing.Size(98, 20);
+            this.OneLabel.TabIndex = 17;
+            this.OneLabel.Text = "0x00000001";
+            this.OneLabel.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.OneLabel.Click += new System.EventHandler(this.label15_Click);
+            // 
+            // ZeroLabel
+            // 
+            this.ZeroLabel.AutoSize = true;
+            this.ZeroLabel.BackColor = System.Drawing.Color.Transparent;
+            this.ZeroLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12.25F);
+            this.ZeroLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
+            this.ZeroLabel.Location = new System.Drawing.Point(94, 68);
+            this.ZeroLabel.Name = "ZeroLabel";
+            this.ZeroLabel.Size = new System.Drawing.Size(98, 20);
+            this.ZeroLabel.TabIndex = 16;
+            this.ZeroLabel.Text = "0x00000000";
+            this.ZeroLabel.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            // 
+            // BLabel
+            // 
+            this.BLabel.AutoSize = true;
+            this.BLabel.BackColor = System.Drawing.Color.Transparent;
+            this.BLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12.25F);
+            this.BLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
+            this.BLabel.Location = new System.Drawing.Point(94, 44);
+            this.BLabel.Name = "BLabel";
+            this.BLabel.Size = new System.Drawing.Size(98, 20);
+            this.BLabel.TabIndex = 15;
+            this.BLabel.Text = "0x00000000";
+            this.BLabel.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            // 
+            // ALabel
+            // 
+            this.ALabel.AutoSize = true;
+            this.ALabel.BackColor = System.Drawing.Color.Transparent;
+            this.ALabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12.25F);
+            this.ALabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
+            this.ALabel.Location = new System.Drawing.Point(94, 22);
+            this.ALabel.Name = "ALabel";
+            this.ALabel.Size = new System.Drawing.Size(98, 20);
+            this.ALabel.TabIndex = 14;
+            this.ALabel.Text = "0x00000000";
+            this.ALabel.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.ALabel.Click += new System.EventHandler(this.label12_Click);
             // 
             // label3
             // 
@@ -180,7 +312,7 @@
             this.valueLabel.AutoSize = true;
             this.valueLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.valueLabel.ForeColor = System.Drawing.Color.Transparent;
-            this.valueLabel.Location = new System.Drawing.Point(93, 0);
+            this.valueLabel.Location = new System.Drawing.Point(94, 0);
             this.valueLabel.Name = "valueLabel";
             this.valueLabel.Padding = new System.Windows.Forms.Padding(20, 0, 0, 0);
             this.valueLabel.Size = new System.Drawing.Size(75, 20);
@@ -330,143 +462,11 @@
             this.label1.Text = "ACC:";
             this.label1.Click += new System.EventHandler(this.label1_Click);
             // 
-            // ALabel
-            // 
-            this.ALabel.AutoSize = true;
-            this.ALabel.BackColor = System.Drawing.Color.Transparent;
-            this.ALabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12.25F);
-            this.ALabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
-            this.ALabel.Location = new System.Drawing.Point(93, 22);
-            this.ALabel.Name = "ALabel";
-            this.ALabel.Size = new System.Drawing.Size(98, 20);
-            this.ALabel.TabIndex = 14;
-            this.ALabel.Text = "0x00000000";
-            this.ALabel.TextAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.ALabel.Click += new System.EventHandler(this.label12_Click);
-            // 
-            // BLabel
-            // 
-            this.BLabel.AutoSize = true;
-            this.BLabel.BackColor = System.Drawing.Color.Transparent;
-            this.BLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12.25F);
-            this.BLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
-            this.BLabel.Location = new System.Drawing.Point(93, 44);
-            this.BLabel.Name = "BLabel";
-            this.BLabel.Size = new System.Drawing.Size(98, 20);
-            this.BLabel.TabIndex = 15;
-            this.BLabel.Text = "0x00000000";
-            this.BLabel.TextAlign = System.Drawing.ContentAlignment.TopCenter;
-            // 
-            // ZeroLabel
-            // 
-            this.ZeroLabel.AutoSize = true;
-            this.ZeroLabel.BackColor = System.Drawing.Color.Transparent;
-            this.ZeroLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12.25F);
-            this.ZeroLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
-            this.ZeroLabel.Location = new System.Drawing.Point(93, 68);
-            this.ZeroLabel.Name = "ZeroLabel";
-            this.ZeroLabel.Size = new System.Drawing.Size(98, 20);
-            this.ZeroLabel.TabIndex = 16;
-            this.ZeroLabel.Text = "0x00000000";
-            this.ZeroLabel.TextAlign = System.Drawing.ContentAlignment.TopCenter;
-            // 
-            // OneLabel
-            // 
-            this.OneLabel.AutoSize = true;
-            this.OneLabel.BackColor = System.Drawing.Color.Transparent;
-            this.OneLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12.25F);
-            this.OneLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
-            this.OneLabel.Location = new System.Drawing.Point(93, 93);
-            this.OneLabel.Name = "OneLabel";
-            this.OneLabel.Size = new System.Drawing.Size(98, 20);
-            this.OneLabel.TabIndex = 17;
-            this.OneLabel.Text = "0x00000001";
-            this.OneLabel.TextAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.OneLabel.Click += new System.EventHandler(this.label15_Click);
-            // 
-            // PCLabel
-            // 
-            this.PCLabel.AutoSize = true;
-            this.PCLabel.BackColor = System.Drawing.Color.Transparent;
-            this.PCLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12.25F);
-            this.PCLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
-            this.PCLabel.Location = new System.Drawing.Point(93, 117);
-            this.PCLabel.Name = "PCLabel";
-            this.PCLabel.Size = new System.Drawing.Size(98, 20);
-            this.PCLabel.TabIndex = 18;
-            this.PCLabel.Text = "0x00000000";
-            this.PCLabel.TextAlign = System.Drawing.ContentAlignment.TopCenter;
-            // 
-            // MARLabel
-            // 
-            this.MARLabel.AutoSize = true;
-            this.MARLabel.BackColor = System.Drawing.Color.Transparent;
-            this.MARLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12.25F);
-            this.MARLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
-            this.MARLabel.Location = new System.Drawing.Point(93, 140);
-            this.MARLabel.Name = "MARLabel";
-            this.MARLabel.Size = new System.Drawing.Size(98, 20);
-            this.MARLabel.TabIndex = 19;
-            this.MARLabel.Text = "0x00000000";
-            this.MARLabel.TextAlign = System.Drawing.ContentAlignment.TopCenter;
-            // 
-            // MDRLabel
-            // 
-            this.MDRLabel.AutoSize = true;
-            this.MDRLabel.BackColor = System.Drawing.Color.Transparent;
-            this.MDRLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12.25F);
-            this.MDRLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
-            this.MDRLabel.Location = new System.Drawing.Point(93, 163);
-            this.MDRLabel.Name = "MDRLabel";
-            this.MDRLabel.Size = new System.Drawing.Size(98, 20);
-            this.MDRLabel.TabIndex = 20;
-            this.MDRLabel.Text = "0x00000000";
-            this.MDRLabel.TextAlign = System.Drawing.ContentAlignment.TopCenter;
-            // 
-            // TEMPLabel
-            // 
-            this.TEMPLabel.AutoSize = true;
-            this.TEMPLabel.BackColor = System.Drawing.Color.Transparent;
-            this.TEMPLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12.25F);
-            this.TEMPLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
-            this.TEMPLabel.Location = new System.Drawing.Point(93, 186);
-            this.TEMPLabel.Name = "TEMPLabel";
-            this.TEMPLabel.Size = new System.Drawing.Size(98, 20);
-            this.TEMPLabel.TabIndex = 21;
-            this.TEMPLabel.Text = "0x00000000";
-            this.TEMPLabel.TextAlign = System.Drawing.ContentAlignment.TopCenter;
-            // 
-            // IRLabel
-            // 
-            this.IRLabel.AutoSize = true;
-            this.IRLabel.BackColor = System.Drawing.Color.Transparent;
-            this.IRLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12.25F);
-            this.IRLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
-            this.IRLabel.Location = new System.Drawing.Point(93, 210);
-            this.IRLabel.Name = "IRLabel";
-            this.IRLabel.Size = new System.Drawing.Size(103, 25);
-            this.IRLabel.TabIndex = 22;
-            this.IRLabel.Text = "- - - - - - - - - -";
-            this.IRLabel.TextAlign = System.Drawing.ContentAlignment.TopCenter;
-            // 
-            // CCLabel
-            // 
-            this.CCLabel.AutoSize = true;
-            this.CCLabel.BackColor = System.Drawing.Color.Transparent;
-            this.CCLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12.25F);
-            this.CCLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
-            this.CCLabel.Location = new System.Drawing.Point(93, 235);
-            this.CCLabel.Name = "CCLabel";
-            this.CCLabel.Size = new System.Drawing.Size(98, 20);
-            this.CCLabel.TabIndex = 23;
-            this.CCLabel.Text = "0x00000000";
-            this.CCLabel.TextAlign = System.Drawing.ContentAlignment.TopCenter;
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(541, 296);
+            this.ClientSize = new System.Drawing.Size(544, 296);
             this.Controls.Add(this.tableLayoutPanel1);
             this.Controls.Add(this.nextInstructionButton);
             this.Controls.Add(this.loadFileButton);

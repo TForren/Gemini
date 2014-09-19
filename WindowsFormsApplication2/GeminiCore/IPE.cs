@@ -27,14 +27,50 @@ namespace GeminiCore
 
             foreach (var line in lines)
             {
-                Regex labelStmtFormat = new Regex(@"^(?<label>.*?)\s*:$");
+                Regex labelStmtFormat = new Regex(@"^(?<label>.*)\s*:$");
+                Regex opcodeStmtFormat = new Regex(@"^\s*(?<opcode>[a-z]{2,3})\s(?<operand>\S*)");
+              //  Regex operandStmtFormat = new Regex(@"\s")
                 var labelStmtMatch = labelStmtFormat.Match(line);
+                var opcodeStmtMatch = opcodeStmtFormat.Match(line);
+
                 if (labelStmtMatch.Success)
                 {
                    var label = labelStmtMatch.Groups["label"].Value;
+                   Console.WriteLine("Label: " + label);
                 }
-            }
+                else if (opcodeStmtMatch.Success)
+                {
+                    var opcode = opcodeStmtMatch.Groups["opcode"].Value;
+                    var operand = opcodeStmtMatch.Groups["operand"].Value;
+                      Console.WriteLine("Opcode: " + opcode + " Operand: " + operand);
+                }
+
+
+
+            } 
 
         }
+/*
+        public string testing(string x)
+        {
+            string currInstruction = " ";
+            switch (currInstruction)
+            {
+                case "LDA":
+                    Console.WriteLine("LDA");
+                    break;
+                case "STA":
+                    Console.WriteLine("STA");
+                    break;
+                case "ADD":
+                    Console.WriteLine("ADD");
+                    break;
+                default:
+                    Console.WriteLine("You done goofed");
+                    break;
+            }
+            return currInstruction;
+        }
+ */ 
     }
 }
