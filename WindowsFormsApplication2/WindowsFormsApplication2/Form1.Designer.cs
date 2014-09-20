@@ -57,8 +57,13 @@
             this.label11 = new System.Windows.Forms.Label();
             this.BackgroundPicBox = new System.Windows.Forms.PictureBox();
             this.label1 = new System.Windows.Forms.Label();
+            this.runAllButton = new System.Windows.Forms.Button();
+            this.nextInstructionTable = new System.Windows.Forms.TableLayoutPanel();
+            this.label12 = new System.Windows.Forms.Label();
+            this.nextInstructionDisplayLabel = new System.Windows.Forms.Label();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.BackgroundPicBox)).BeginInit();
+            this.nextInstructionTable.SuspendLayout();
             this.SuspendLayout();
             // 
             // accLabel
@@ -86,7 +91,7 @@
             // 
             // nextInstructionButton
             // 
-            this.nextInstructionButton.Location = new System.Drawing.Point(473, 256);
+            this.nextInstructionButton.Location = new System.Drawing.Point(473, 242);
             this.nextInstructionButton.Margin = new System.Windows.Forms.Padding(2);
             this.nextInstructionButton.Name = "nextInstructionButton";
             this.nextInstructionButton.Size = new System.Drawing.Size(56, 19);
@@ -443,7 +448,7 @@
             this.BackgroundPicBox.Image = ((System.Drawing.Image)(resources.GetObject("BackgroundPicBox.Image")));
             this.BackgroundPicBox.Location = new System.Drawing.Point(-192, -54);
             this.BackgroundPicBox.Name = "BackgroundPicBox";
-            this.BackgroundPicBox.Size = new System.Drawing.Size(786, 394);
+            this.BackgroundPicBox.Size = new System.Drawing.Size(777, 390);
             this.BackgroundPicBox.TabIndex = 5;
             this.BackgroundPicBox.TabStop = false;
             this.BackgroundPicBox.Click += new System.EventHandler(this.pictureBox1_Click);
@@ -462,11 +467,68 @@
             this.label1.Text = "ACC:";
             this.label1.Click += new System.EventHandler(this.label1_Click);
             // 
+            // runAllButton
+            // 
+            this.runAllButton.Location = new System.Drawing.Point(473, 265);
+            this.runAllButton.Margin = new System.Windows.Forms.Padding(2);
+            this.runAllButton.Name = "runAllButton";
+            this.runAllButton.Size = new System.Drawing.Size(56, 19);
+            this.runAllButton.TabIndex = 6;
+            this.runAllButton.Text = "Run All";
+            this.runAllButton.UseVisualStyleBackColor = true;
+            // 
+            // nextInstructionTable
+            // 
+            this.nextInstructionTable.BackColor = System.Drawing.Color.Transparent;
+            this.nextInstructionTable.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("nextInstructionTable.BackgroundImage")));
+            this.nextInstructionTable.ColumnCount = 1;
+            this.nextInstructionTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.nextInstructionTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.nextInstructionTable.Controls.Add(this.nextInstructionDisplayLabel, 0, 1);
+            this.nextInstructionTable.Controls.Add(this.label12, 0, 0);
+            this.nextInstructionTable.Location = new System.Drawing.Point(6, 59);
+            this.nextInstructionTable.Name = "nextInstructionTable";
+            this.nextInstructionTable.RowCount = 2;
+            this.nextInstructionTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.nextInstructionTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.nextInstructionTable.Size = new System.Drawing.Size(200, 66);
+            this.nextInstructionTable.TabIndex = 7;
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.BackColor = System.Drawing.Color.Transparent;
+            this.label12.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label12.ForeColor = System.Drawing.Color.Moccasin;
+            this.label12.Location = new System.Drawing.Point(3, 0);
+            this.label12.Name = "label12";
+            this.label12.Padding = new System.Windows.Forms.Padding(1, 0, 0, 0);
+            this.label12.Size = new System.Drawing.Size(184, 29);
+            this.label12.TabIndex = 24;
+            this.label12.Text = "Next Instruction:";
+            this.label12.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.label12.Click += new System.EventHandler(this.label12_Click_1);
+            // 
+            // nextInstructionDisplayLabel
+            // 
+            this.nextInstructionDisplayLabel.AutoSize = true;
+            this.nextInstructionDisplayLabel.BackColor = System.Drawing.Color.Transparent;
+            this.nextInstructionDisplayLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12.25F);
+            this.nextInstructionDisplayLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
+            this.nextInstructionDisplayLabel.Location = new System.Drawing.Point(3, 33);
+            this.nextInstructionDisplayLabel.Name = "nextInstructionDisplayLabel";
+            this.nextInstructionDisplayLabel.Size = new System.Drawing.Size(119, 20);
+            this.nextInstructionDisplayLabel.TabIndex = 25;
+            this.nextInstructionDisplayLabel.Text = "- - - - - - - - - - ";
+            this.nextInstructionDisplayLabel.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(544, 296);
+            this.Controls.Add(this.nextInstructionTable);
+            this.Controls.Add(this.runAllButton);
             this.Controls.Add(this.tableLayoutPanel1);
             this.Controls.Add(this.nextInstructionButton);
             this.Controls.Add(this.loadFileButton);
@@ -479,6 +541,8 @@
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.BackgroundPicBox)).EndInit();
+            this.nextInstructionTable.ResumeLayout(false);
+            this.nextInstructionTable.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -514,6 +578,10 @@
         private System.Windows.Forms.Label MDRLabel;
         private System.Windows.Forms.Label MARLabel;
         private System.Windows.Forms.Label PCLabel;
+        private System.Windows.Forms.Button runAllButton;
+        private System.Windows.Forms.TableLayoutPanel nextInstructionTable;
+        private System.Windows.Forms.Label label12;
+        private System.Windows.Forms.Label nextInstructionDisplayLabel;
     }
 }
 

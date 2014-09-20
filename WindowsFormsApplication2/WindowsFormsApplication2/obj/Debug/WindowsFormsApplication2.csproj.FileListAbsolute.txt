@@ -34,3 +34,14 @@ E:\Important Stuff\udel\CISC360\VisualStudio_stuff\WindowsFormsApplication2\Wind
 E:\Important Stuff\udel\CISC360\VisualStudio_stuff\WindowsFormsApplication2\WindowsFormsApplication2\obj\Debug\WindowsFormsApplication2.Form1.resources
 E:\Important Stuff\udel\CISC360\VisualStudio_stuff\WindowsFormsApplication2\WindowsFormsApplication2\obj\Debug\WindowsFormsApplication2.Properties.Resources.resources
 E:\Important Stuff\udel\CISC360\VisualStudio_stuff\WindowsFormsApplication2\WindowsFormsApplication2\obj\Debug\WindowsFormsApplication2.csproj.GenerateResource.Cache
+C:\Users\TFor\Source\Repos\Gemini\WindowsFormsApplication2\WindowsFormsApplication2\bin\Debug\WindowsFormsApplication2.exe.config
+C:\Users\TFor\Source\Repos\Gemini\WindowsFormsApplication2\WindowsFormsApplication2\obj\Debug\WindowsFormsApplication2.exe
+C:\Users\TFor\Source\Repos\Gemini\WindowsFormsApplication2\WindowsFormsApplication2\obj\Debug\WindowsFormsApplication2.pdb
+C:\Users\TFor\Source\Repos\Gemini\WindowsFormsApplication2\WindowsFormsApplication2\bin\Debug\WindowsFormsApplication2.exe
+C:\Users\TFor\Source\Repos\Gemini\WindowsFormsApplication2\WindowsFormsApplication2\bin\Debug\WindowsFormsApplication2.pdb
+C:\Users\TFor\Source\Repos\Gemini\WindowsFormsApplication2\WindowsFormsApplication2\bin\Debug\GeminiCore.dll
+C:\Users\TFor\Source\Repos\Gemini\WindowsFormsApplication2\WindowsFormsApplication2\bin\Debug\GeminiCore.pdb
+C:\Users\TFor\Source\Repos\Gemini\WindowsFormsApplication2\WindowsFormsApplication2\obj\Debug\WindowsFormsApplication2.csprojResolveAssemblyReference.cache
+C:\Users\TFor\Source\Repos\Gemini\WindowsFormsApplication2\WindowsFormsApplication2\obj\Debug\WindowsFormsApplication2.Form1.resources
+C:\Users\TFor\Source\Repos\Gemini\WindowsFormsApplication2\WindowsFormsApplication2\obj\Debug\WindowsFormsApplication2.Properties.Resources.resources
+C:\Users\TFor\Source\Repos\Gemini\WindowsFormsApplication2\WindowsFormsApplication2\obj\Debug\WindowsFormsApplication2.csproj.GenerateResource.Cache
