@@ -15,16 +15,18 @@ namespace GeminiCore
 {
     public class IPE
     {
-        ArrayList binary = new ArrayList();
-  
+        List<string> binary = new List<string>();
+
+        Dictionary<string, string> labelLocationMap = new Dictionary<string, string>();
+        //LabelLocationMap.Add("LabelName", "LineNumber");
+
         public string FileToParse { get; set; }
 
         public IPE(string filename)
         {
             this.FileToParse = filename;
         }
-
-        public void ParseFile()
+        public List<string> ParseFile()
         {
             int lineCounter = 1;
             var lines = File.ReadAllLines(this.FileToParse).ToList<string>();
@@ -43,10 +45,12 @@ namespace GeminiCore
                    var label = labelStmtMatch.Groups["label"].Value;
                    Console.WriteLine("Label: " + label);
                     
-                   string instruction = "1000000";
+                   string instruction = "100000";
                    string immediate = "0";
-                   string value = convertToBinary(lineCounter);
-                   string opCode = instruction + immediate + value;
+                   string sign = "0";
+                   string lineNum = convertToBinary(lineCounter);
+                   labelLocationMap.Add(label, lineNum); 
+                   string opCode = instruction + immediate + sign + lineNum;
                    Console.WriteLine(opCode);
                    binary.Add(opCode);
                              
@@ -62,53 +66,53 @@ namespace GeminiCore
                     switch (currInst)
                     {
                         case "lda":
-                            binInstr = "0000000";
+                            binInstr = "000000";
                             break;
                         case "sta":
-                            binInstr = "0000001";
+                            binInstr = "000001";
                             break;
                         case "add":
-                            binInstr = "0000010";
+                            binInstr = "000010";
                             break;
                         case "sub":
-                            binInstr = "0000011";
+                            binInstr = "000011";
                             break;
                         case "mul":
-                            binInstr = "0000100";
+                            binInstr = "000100";
                             break;
                         case "div":
-                            binInstr = "0000101";
+                            binInstr = "000101";
                             break;
                         case "and":
-                            binInstr = "0000110";
+                            binInstr = "000110";
                             break;
                         case "or":
-                            binInstr = "0000111";
+                            binInstr = "000111";
                             break;
                         case "shl":
-                            binInstr = "0001000";
+                            binInstr = "001000";
                             break;
-                            /*
                         case "nota":
-                            binInstr = "0001001";
+                            binInstr = "001001";
                             break;
                         case "ba":
-                            binInstr = "0001010";
+                            binInstr = "001010";
                             break;
                         case "be":
-                            binInstr = "0001011";
+                            binInstr = "001011";
                             break;
                         case "bl":
-                            binInstr = "0001100";
+                            binInstr = "001100";
                             break;
                         case "bg":
-                            binInstr = "0001101";
+                            binInstr = "001101";
                             break;
+                            /*
                         case "nop":
-                            binInstr = "0001110";
+                            binInstr = "001110";
                             break;
                         case "hlt":
-                            binInstr = "0001111";
+                            binInstr = "001111";
                             break;
                              */
 
@@ -132,9 +136,10 @@ namespace GeminiCore
                         immediate = "0";
                     }
 
-                    //memory address
+                    //memory address and sign bit
                     if (operand != null)
                     {
+                        string sign = "";
                         string op = Convert.ToString(operand);
                         string mem = "";
                         if (immediate == "1")
@@ -152,37 +157,56 @@ namespace GeminiCore
                                 }
                             }
                             int intVal = Convert.ToInt32(value);
+
+                            if (intVal < 0)
+                            {
+                                sign = "1";
+                                intVal = Math.Abs(intVal);
+                            }
+                            else
+                            {
+                                sign = "0";
+                            }
                             mem = convertToBinary(intVal);
-                            string opCode = binInstr + immediate + mem;
+                            string opCode = binInstr + immediate + sign + mem;
                             Console.WriteLine(opCode);
                             binary.Add(opCode);
                         }
                         //immediate == 0
                         else
                         {
+                            sign = "0";
                             string address = "";
+                            for (int i = 0; i < op.Length; i++)
+                            {
+                                if (op[i] == '$')
+                                {
+                                    continue;
+                                }
+                                else
+                                {
+                                    address = address + op[i];
+                                }
+                            }
                             if (op[0] == '$')
                             {
-                                for (int i = 0; i < op.Length; i++)
-                                {
-                                    if (op[i] == '$')
-                                    {
-                                        continue;
-                                    }
-                                    else
-                                    {
-                                        address = address + op[i];
-                                    }
-                                }
                                 mem = convertToBinary(Convert.ToInt32(address));
                             }
                             //branches, jumps -- need to implement
                             else
                             {
+                                if (labelLocationMap.ContainsKey(address))
+                                {
+                                    mem = labelLocationMap[address];
+                                }
                                 //op is the label name (string), need to keep track of each label name when first find it
-                                mem = "00000000";
+                                else
+                                {
+                                    //label doesn't exist
+                                    mem = "00000000";
+                                }
                             }
-                            string opCode = binInstr + immediate + mem;
+                            string opCode = binInstr + immediate + sign + mem;
                             Console.WriteLine(opCode);
                             binary.Add(opCode);
                         }
@@ -191,14 +215,14 @@ namespace GeminiCore
                     else
                     {
                         //if no operand exists
+                        string sign = "0";
                         string mem = "00000000";
-                        string opCode = binInstr + immediate + mem;
+                        string opCode = binInstr + immediate + sign + mem;
                         Console.WriteLine(opCode);
                         binary.Add(opCode);
                     }
                     
                 }
-                //expression doesn't detect operations ba, be, bl, bg
                 else if (onlyOpStmtMatch.Success)
                 {
                     var opcode = onlyOpStmtMatch.Groups["opcode"].Value;
@@ -209,37 +233,34 @@ namespace GeminiCore
                     switch (currIn)
                     {
                         case "nota":
-                            binInstr = "0001001";
-                            break;
-                        case "ba":
-                            binInstr = "0001010";
-                            break;
-                        case "be":
-                            binInstr = "0001011";
-                            break;
-                        case "bl":
-                            binInstr = "0001100";
-                            break;
-                        case "bg":
-                            binInstr = "0001101";
+                            binInstr = "001001";
                             break;
                         case "nop":
-                            binInstr = "0001110";
+                            binInstr = "001110";
                             break;
                         case "hlt":
-                            binInstr = "0001111";
+                            binInstr = "001111";
                             break;
                     }
-                    string opCode = binInstr + "0" + "00000000";
+                    string opCode = binInstr + "00" + "00000000";
                     Console.WriteLine(opCode);
                     binary.Add(opCode);
                 }
 
                 lineCounter++;
-            } 
-
+            }
+            return binary;
         }
 
+        public void createBinaryTextFile(List<string> list) {
+            using (TextWriter writer = File.CreateText(@"E:\Important Stuff\udel\CISC360\stuuuff\Binary.txt"))
+            {
+                foreach (string actor in list)
+                {
+                    writer.WriteLine(actor);
+                }
+            }
+        }
         public string convertToBinary(int x)
         {
             ArrayList bin = new ArrayList();

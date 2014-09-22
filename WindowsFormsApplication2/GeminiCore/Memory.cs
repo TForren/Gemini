@@ -12,6 +12,10 @@ namespace GeminiCore
 {
     public class Memory
     {
+
+        Dictionary<string, double> memoryBook = new Dictionary<string, double>();
+
+        
         
     }
 }

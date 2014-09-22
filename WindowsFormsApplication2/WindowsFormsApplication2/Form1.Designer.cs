@@ -59,8 +59,10 @@
             this.label1 = new System.Windows.Forms.Label();
             this.runAllButton = new System.Windows.Forms.Button();
             this.nextInstructionTable = new System.Windows.Forms.TableLayoutPanel();
-            this.label12 = new System.Windows.Forms.Label();
             this.nextInstructionDisplayLabel = new System.Windows.Forms.Label();
+            this.label12 = new System.Windows.Forms.Label();
+            this.button1 = new System.Windows.Forms.Button();
+            this.LoadLabel = new System.Windows.Forms.Label();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.BackgroundPicBox)).BeginInit();
             this.nextInstructionTable.SuspendLayout();
@@ -80,12 +82,12 @@
             // 
             // loadFileButton
             // 
-            this.loadFileButton.Location = new System.Drawing.Point(473, 23);
+            this.loadFileButton.Location = new System.Drawing.Point(473, 48);
             this.loadFileButton.Margin = new System.Windows.Forms.Padding(2);
             this.loadFileButton.Name = "loadFileButton";
-            this.loadFileButton.Size = new System.Drawing.Size(56, 19);
+            this.loadFileButton.Size = new System.Drawing.Size(56, 20);
             this.loadFileButton.TabIndex = 2;
-            this.loadFileButton.Text = "Load";
+            this.loadFileButton.Text = "File";
             this.loadFileButton.UseVisualStyleBackColor = true;
             this.loadFileButton.Click += new System.EventHandler(this.loadFileButton_Click);
             // 
@@ -494,6 +496,19 @@
             this.nextInstructionTable.Size = new System.Drawing.Size(200, 66);
             this.nextInstructionTable.TabIndex = 7;
             // 
+            // nextInstructionDisplayLabel
+            // 
+            this.nextInstructionDisplayLabel.AutoSize = true;
+            this.nextInstructionDisplayLabel.BackColor = System.Drawing.Color.Transparent;
+            this.nextInstructionDisplayLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12.25F);
+            this.nextInstructionDisplayLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
+            this.nextInstructionDisplayLabel.Location = new System.Drawing.Point(3, 33);
+            this.nextInstructionDisplayLabel.Name = "nextInstructionDisplayLabel";
+            this.nextInstructionDisplayLabel.Size = new System.Drawing.Size(119, 20);
+            this.nextInstructionDisplayLabel.TabIndex = 25;
+            this.nextInstructionDisplayLabel.Text = "- - - - - - - - - - ";
+            this.nextInstructionDisplayLabel.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            // 
             // label12
             // 
             this.label12.AutoSize = true;
@@ -509,24 +524,34 @@
             this.label12.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             this.label12.Click += new System.EventHandler(this.label12_Click_1);
             // 
-            // nextInstructionDisplayLabel
+            // button1
             // 
-            this.nextInstructionDisplayLabel.AutoSize = true;
-            this.nextInstructionDisplayLabel.BackColor = System.Drawing.Color.Transparent;
-            this.nextInstructionDisplayLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12.25F);
-            this.nextInstructionDisplayLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
-            this.nextInstructionDisplayLabel.Location = new System.Drawing.Point(3, 33);
-            this.nextInstructionDisplayLabel.Name = "nextInstructionDisplayLabel";
-            this.nextInstructionDisplayLabel.Size = new System.Drawing.Size(119, 20);
-            this.nextInstructionDisplayLabel.TabIndex = 25;
-            this.nextInstructionDisplayLabel.Text = "- - - - - - - - - - ";
-            this.nextInstructionDisplayLabel.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.button1.Location = new System.Drawing.Point(473, 71);
+            this.button1.Margin = new System.Windows.Forms.Padding(2);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(56, 20);
+            this.button1.TabIndex = 8;
+            this.button1.Text = "Binary";
+            this.button1.UseVisualStyleBackColor = true;
+            // 
+            // LoadLabel
+            // 
+            this.LoadLabel.AutoSize = true;
+            this.LoadLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.LoadLabel.ForeColor = System.Drawing.Color.Moccasin;
+            this.LoadLabel.Location = new System.Drawing.Point(472, 17);
+            this.LoadLabel.Name = "LoadLabel";
+            this.LoadLabel.Size = new System.Drawing.Size(62, 24);
+            this.LoadLabel.TabIndex = 9;
+            this.LoadLabel.Text = "Load:";
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(544, 296);
+            this.Controls.Add(this.LoadLabel);
+            this.Controls.Add(this.button1);
             this.Controls.Add(this.nextInstructionTable);
             this.Controls.Add(this.runAllButton);
             this.Controls.Add(this.tableLayoutPanel1);
@@ -582,6 +607,8 @@
         private System.Windows.Forms.TableLayoutPanel nextInstructionTable;
         private System.Windows.Forms.Label label12;
         private System.Windows.Forms.Label nextInstructionDisplayLabel;
+        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Label LoadLabel;
     }
 }
 

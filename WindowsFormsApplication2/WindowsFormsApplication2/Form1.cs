@@ -38,10 +38,16 @@ namespace WindowsFormsApplication2
             accLabel.Parent = BackgroundPicBox;
             accLabel.Location = pos2;
             accLabel.BackColor = Color.Transparent;
+            //Loadlabel
+            var pos3 = this.PointToScreen(LoadLabel.Location);
+            pos3 = BackgroundPicBox.PointToClient(pos3);
+            LoadLabel.Parent = BackgroundPicBox;
+            LoadLabel.Location = pos3;
+            LoadLabel.BackColor = Color.Transparent;
 
 
 #if DEBUG
-            loadFileButton.Text = "Load";
+            //loadFileButton.Text = "Load";
 #endif
         }
 
@@ -55,7 +61,10 @@ namespace WindowsFormsApplication2
                     try
                     {
                         var ipe = new IPE(ofd.FileName);
-                        ipe.ParseFile();
+                        List<string> binary = ipe.ParseFile();
+                        ipe.createBinaryTextFile(binary);
+                        myCPU.setBinary(binary);
+                        
                     }
                     catch (Exception err)
                     {
@@ -97,7 +106,7 @@ namespace WindowsFormsApplication2
 
         private void label2_Click(object sender, EventArgs e)
         {
-                    }
+        }
 
         private void label3_Click(object sender, EventArgs e)
         {
