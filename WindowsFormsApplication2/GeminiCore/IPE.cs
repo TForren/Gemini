@@ -26,6 +26,7 @@ namespace GeminiCore
         {
             this.FileToParse = filename;
         }
+
         public List<string> ParseFile()
         {
             int lineCounter = 1;
@@ -33,12 +34,14 @@ namespace GeminiCore
 
             foreach (var line in lines)
             {
+                #region Regex stuff. Puts capture groups in variables
                 Regex labelStmtFormat = new Regex(@"^(?<label>.*)\s*:$");
                 Regex opcodeStmtFormat = new Regex(@"^\s*(?<opcode>[a-z]{2,3})\s(?<operand>\S*)");
                 Regex onlyOpStmtFormat = new Regex(@"^\s*(?<opcode>[a-z]{2,4})");
                 var labelStmtMatch = labelStmtFormat.Match(line);
                 var opcodeStmtMatch = opcodeStmtFormat.Match(line);
                 var onlyOpStmtMatch = onlyOpStmtFormat.Match(line);
+                #endregion
 
                 if (labelStmtMatch.Success)
                 {
@@ -62,67 +65,16 @@ namespace GeminiCore
                     Console.WriteLine("Opcode: " + opcode + " Operand: " + operand);
 
                     string binInstr = "";
+                    string immediate = "";
                     string currInst = opcode;
-                    switch (currInst)
-                    {
-                        case "lda":
-                            binInstr = "000000";
-                            break;
-                        case "sta":
-                            binInstr = "000001";
-                            break;
-                        case "add":
-                            binInstr = "000010";
-                            break;
-                        case "sub":
-                            binInstr = "000011";
-                            break;
-                        case "mul":
-                            binInstr = "000100";
-                            break;
-                        case "div":
-                            binInstr = "000101";
-                            break;
-                        case "and":
-                            binInstr = "000110";
-                            break;
-                        case "or":
-                            binInstr = "000111";
-                            break;
-                        case "shl":
-                            binInstr = "001000";
-                            break;
-                        case "nota":
-                            binInstr = "001001";
-                            break;
-                        case "ba":
-                            binInstr = "001010";
-                            break;
-                        case "be":
-                            binInstr = "001011";
-                            break;
-                        case "bl":
-                            binInstr = "001100";
-                            break;
-                        case "bg":
-                            binInstr = "001101";
-                            break;
-                            /*
-                        case "nop":
-                            binInstr = "001110";
-                            break;
-                        case "hlt":
-                            binInstr = "001111";
-                            break;
-                             */
 
-                    }
+                    //Instruction
+                    binInstr = identifyInstr(currInst); //Takes in the opcode found by regex and returns custom binary designation
 
                     //immediate value
-                    string immediate = "";
-                    if (operand != null)
+                    if (operand != null) // Is there something after the opcode?
                     {
-                        if (operand[0] == '#')
+                        if (operand[0] == '#') // Is it immediate?
                         {
                             immediate = "1";
                         }
@@ -131,7 +83,7 @@ namespace GeminiCore
                             immediate = "0";
                         }
                     }
-                    else
+                    else // There is nothing after the opcode
                     {
                         immediate = "0";
                     }
@@ -313,6 +265,68 @@ namespace GeminiCore
             }
             return currInstruction;
         }
- */ 
+ */
+
+        #region identifyInstr (Takes in opcode from regex and returns binary desigation)
+        public string identifyInstr(string inst)
+        {
+            string foundInst = "";
+            switch (inst)
+            {
+                case "lda":
+                    foundInst = "000000";
+                    break;
+                case "sta":
+                    foundInst = "000001";
+                    break;
+                case "add":
+                    foundInst = "000010";
+                    break;
+                case "sub":
+                    foundInst = "000011";
+                    break;
+                case "mul":
+                    foundInst = "000100";
+                    break;
+                case "div":
+                    foundInst = "000101";
+                    break;
+                case "and":
+                    foundInst = "000110";
+                    break;
+                case "or":
+                    foundInst = "000111";
+                    break;
+                case "shl":
+                    foundInst = "001000";
+                    break;
+                case "nota":
+                    foundInst = "001001";
+                    break;
+                case "ba":
+                    foundInst = "001010";
+                    break;
+                case "be":
+                    foundInst = "001011";
+                    break;
+                case "bl":
+                    foundInst = "001100";
+                    break;
+                case "bg":
+                    foundInst = "001101";
+                    break;
+                /*
+            case "nop":
+                binInstr = "001110";
+                break;
+            case "hlt":
+                binInstr = "001111";
+                break;
+                 */
+            }
+
+            return foundInst;
+        }
+        #endregion
     }
 }

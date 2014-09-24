@@ -10,6 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.IO;
 
 using GeminiCore;
 
@@ -62,7 +63,8 @@ namespace WindowsFormsApplication2
                     {
                         var ipe = new IPE(ofd.FileName);
                         List<string> binary = ipe.ParseFile();
-                        ipe.createBinaryTextFile(binary);
+                        //ipe.createBinaryTextFile(binary);
+                        createBinaryFile(binary);
                         myCPU.setBinary(binary);
                         
                     }
@@ -72,6 +74,24 @@ namespace WindowsFormsApplication2
                     }
                 }
             }
+        }
+
+        public void createBinaryFile(List<string> binary)
+        {
+            SaveFileDialog save = new SaveFileDialog();
+            save.FileName = "Binary.txt";
+            save.Filter = "Text File | *.txt";
+            if (save.ShowDialog() == DialogResult.OK)
+            {
+                StreamWriter writer = new StreamWriter(save.OpenFile());
+                for (int i = 0; i < binary.Count; i++)
+                {
+                    writer.WriteLine(binary[i]);
+                }
+                writer.Dispose();
+                writer.Close();
+            }
+
         }
         #endregion
 
