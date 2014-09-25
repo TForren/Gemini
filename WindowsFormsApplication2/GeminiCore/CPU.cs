@@ -26,6 +26,7 @@ namespace GeminiCore
         public int CC;
 
         private List<string> binary;
+        private List<Int16> binary16;
         private int index = 0;
         private string instr = "";
         private char imm = ' ';
@@ -42,6 +43,10 @@ namespace GeminiCore
         public void setBinary(List<string> list)
         {
             binary = list;
+        }
+        public void setBinary16(List<Int16> list)
+        {
+            binary16 = list;
         }
 
         public void nextInstruction()

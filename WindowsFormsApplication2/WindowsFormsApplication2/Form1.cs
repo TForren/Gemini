@@ -25,7 +25,7 @@ namespace WindowsFormsApplication2
             myCPU = new CPU();
 
             InitializeComponent();
-
+            #region GUI pretty stuff. Making transparencies
             //Making the Acc labels transparent with the picturebox background
             //Label1 = "ACC:"
             var pos = this.PointToScreen(label1.Location);
@@ -45,11 +45,8 @@ namespace WindowsFormsApplication2
             LoadLabel.Parent = BackgroundPicBox;
             LoadLabel.Location = pos3;
             LoadLabel.BackColor = Color.Transparent;
+#endregion
 
-
-#if DEBUG
-            //loadFileButton.Text = "Load";
-#endif
         }
 
         #region Events
@@ -63,9 +60,11 @@ namespace WindowsFormsApplication2
                     {
                         var ipe = new IPE(ofd.FileName);
                         List<string> binary = ipe.ParseFile();
+                        List<Int16> finBinary = convert(binary);
                         //ipe.createBinaryTextFile(binary);
-                        createBinaryFile(binary);
+                        createBinaryFile(finBinary);
                         myCPU.setBinary(binary);
+                        myCPU.setBinary16(finBinary);
                         
                     }
                     catch (Exception err)
@@ -75,18 +74,52 @@ namespace WindowsFormsApplication2
                 }
             }
         }
-
-        public void createBinaryFile(List<string> binary)
+        public double convertToBase10(string x)
         {
-            SaveFileDialog save = new SaveFileDialog();
-            save.FileName = "Binary.txt";
-            save.Filter = "Text File | *.txt";
-            if (save.ShowDialog() == DialogResult.OK)
+            double num = 0;
+            int exp = x.Length - 1;
+            Console.WriteLine("x: " + x);
+            for (int i = 0; i < x.Length; i++)
             {
-                StreamWriter writer = new StreamWriter(save.OpenFile());
-                for (int i = 0; i < binary.Count; i++)
+                if (x[i] == '1')
                 {
-                    writer.WriteLine(binary[i]);
+                    //Console.WriteLine("x[" + i + "] = " + x[i]);
+                    num = num + Math.Pow(2, exp);
+                 //   Console.WriteLine("exp: " + exp);
+                   // Console.WriteLine("num: " + num);
+                }
+                exp--;
+            }
+            return num;
+        }
+
+        public List<Int16> convert(List<string> list) // Stuff breaks here. Int16 is maxed at 32,767 so our 16 digit binary number does not convert.
+        {
+            List<Int16> final = new List<Int16>();
+            Int16 num = 0;
+            for (int i = 0; i < list.Count; i++)
+            {
+                num = (short)convertToBase10(list[i]);
+
+                final.Add(Convert.ToInt16(num));
+            }
+            return final;
+        }
+
+        public void createBinaryFile(List<Int16> binary)
+        {
+           // Console.WriteLine(binary.ToString());
+            SaveFileDialog save = new SaveFileDialog();
+            save.FileName = "Binary.out";
+            save.Filter = "Binary File Format | *.out";
+
+            if (save.ShowDialog() == DialogResult.OK)
+            { 
+                BinaryWriter writer = new BinaryWriter(save.OpenFile());
+                foreach (int i in binary)
+                {
+                    writer.Write(binary[i]);
+                 //   Console.WriteLine(binary[i].ToString());
                 }
                 writer.Dispose();
                 writer.Close();
