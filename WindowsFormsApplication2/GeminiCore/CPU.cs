@@ -13,7 +13,7 @@ namespace GeminiCore
 {
     public class CPU
     {
-        public double ACC { get; private set; }
+        public Int16 ACC { get; private set; }
         public int A = 546456; // test number
         public int B;
         public int Zero;
@@ -27,18 +27,25 @@ namespace GeminiCore
 
         private List<string> binary;
         private List<Int16> binary16;
+        private Dictionary<string, int> LabelLocationMap;
         private int index = 0;
         private string instr = "";
         private char imm = ' ';
         private char sign = ' ';
         private string mem = "";
+        Boolean finished = false;
 
         public CPU()
         {
             ACC = 0;
         }
 
-        Dictionary<string, double> memoryBook = new Dictionary<string, double>();
+        Dictionary<string, Int16> memoryBook = new Dictionary<string, Int16>();
+
+        public void setLabelLocationMap(Dictionary<string, int> list)
+        {
+            LabelLocationMap = list;
+        }
 
         public void setBinary(List<string> list)
         {
@@ -90,11 +97,12 @@ namespace GeminiCore
                     //LDA
                     if (immediate && signed)
                     {
-                        ACC = 0 - convertToBase10(mem);
+                        //immediates can never be signed
+                        //ACC = 0 - convertToBase10(mem);
                     }
                     else if (immediate && !signed)
                     {
-                        ACC = convertToBase10(mem);
+                        ACC = Convert.ToInt16(mem);
                     }
                     else
                     {
@@ -116,183 +124,113 @@ namespace GeminiCore
                     //ADD
                     if (immediate && signed)
                     {
-                        ACC = ACC - convertToBase10(mem);
+                        //immediate can't be negative
                     }
                     else if (immediate && !signed)
                     {
-                        ACC += convertToBase10(mem);
+                        ACC += Convert.ToInt16(mem);
                     }
                     else
                     {
-                        ACC = ACC + memoryBook[mem];
+                        ACC = (Int16)(ACC + memoryBook[mem]);
                     }
                     break;
                 case "000011":
                     //SUB
                     if (immediate && signed)
                     {
-                        ACC = ACC + convertToBase10(mem);
+                        //throw exception
                     }
                     else if (immediate && !signed)
                     {
-                        ACC = ACC - convertToBase10(mem);
+                        ACC = (Int16) (ACC - Convert.ToInt16(mem));
                     }
                     else
                     {
-                        ACC = ACC - memoryBook[mem];
+                        ACC = (Int16) (ACC - memoryBook[mem]);
                     }
                     break;
                 case "000100":
                     //mul
                     if (immediate && signed)
                     {
-                        ACC = -ACC * convertToBase10(mem);
+                        //throw exception
                     }
                     else if (immediate && !signed)
                     {
-                        ACC = ACC * convertToBase10(mem);
+                        ACC = (Int16) (ACC * Convert.ToInt16(mem));
                     }
                     else
                     {
-                        ACC = ACC * memoryBook[mem];
+                        ACC = (Int16)(ACC * memoryBook[mem]);
                     }
                     break;
                 case "000101":
                     //div
-                    //if ACC is a decimal number?
-                    if (convertToBase10(mem) == 0)
+                    if (immediate && convertToBase10(mem) == 0)
                     {
                         //throw exception
                     }
                     else if (immediate && signed)
                     {
-                        ACC = -ACC / convertToBase10(mem);
+                        //throw exception
                     }
                     else if (immediate && !signed)
                     {
-                        ACC = ACC / convertToBase10(mem);
+                        ACC = (Int16)(ACC / Convert.ToInt16(mem));
                     }
                     else
                     {
-                        ACC = ACC / memoryBook[mem];
+                        ACC = (Int16)(ACC / memoryBook[mem]);
                     }
                     break;
                 case "000110":
-                    //And, if both acc and mem are negative, is output neg?
-                    string binACC = convertToBinary(Math.Abs(ACC));
-                    if (ACC < 0)
+                    //& is and operation
+                    if (immediate && signed)
                     {
-                        binACC = negateBinary(binACC);
+                        //exception
                     }
-                    int i = 8;
-                    string result = "";
-                    if (immediate)
+                    else if (immediate && !signed)
                     {
-                        while (i > 0)
-                        {
-                            if (binACC[i] == 1 && mem[i] == 1)
-                            {
-                                result += "1";
-                            }
-                            else
-                            {
-                                result += "0";
-                            }
-                            i--;
-                        }
-
-                        ACC = convertToBase10(result);
-                        i = 8;
-                        result = "";
+                        ACC = (Int16) (ACC & Convert.ToInt16(mem));
                     }
                     else
                     {
-                        double value = memoryBook[mem];
-                        string binVal = convertToBinary(value);
-                        while (i > 0)
-                        {
-                            if (binACC[i] == 1 && binVal[i] == 1)
-                            {
-                                result += "1";
-                            }
-                            else
-                            {
-                                result += "0";
-                            }
-                            i--;
-                        }
-
-                        ACC = convertToBase10(result);
-                        i = 8;
-                        result = "";
+                        ACC = (Int16)(ACC & memoryBook[mem]);
                     }
                     break;
                 case "000111":
-                    //or, same question as and
-                    string binACCOR = convertToBinary(Math.Abs(ACC));
-                    if (ACC < 0)
+                    //or
+                    if (immediate && signed)
                     {
-                        binACCOR = negateBinary(binACCOR);
+                        //exception
                     }
-                    int j = 8;
-                    string final = "";
-                    if (immediate)
+                    else if (immediate && !signed)
                     {
-                        while (j > 0)
-                        {
-                            if (binACCOR[j] == 0 && mem[j] == 0)
-                            {
-                                final += "0";
-                            }
-                            else
-                            {
-                                final += "1";
-                            }
-                            j--;
-                        }
-
-                        ACC = convertToBase10(final);
-                        j = 8;
-                        final = "";
+                        ACC = (Int16)(ACC | Convert.ToInt16(mem));
                     }
                     else
                     {
-                        double value = memoryBook[mem];
-                        string binVal = convertToBinary(value);
-                        while (j > 0)
-                        {
-                            if (binACCOR[j] == 0 && binVal[j] == 0)
-                            {
-                                final += "0";
-                            }
-                            else
-                            {
-                                final += "1";
-                            }
-                            j--;
-                        }
-
-                        ACC = convertToBase10(final);
-                        j = 8;
-                        final = "";
+                        ACC = (Int16)(ACC | memoryBook[mem]);
                     }
                     break;
                 case "001000":
                     //SHL, if value is negative, should we shift right?
                     if (immediate)
                     {
-                        string binaryAcc = convertToBinary(ACC);
-                        double value = convertToBase10(mem);
+                        string binAcc = Convert.ToString(ACC);
+                        Int16 value = Convert.ToInt16(mem);
                         string afterSHL = "";
                         for (int k = (int)value; k < 8; k++)
                         {
-                            afterSHL += binaryAcc[k];
+                            afterSHL += binAcc[k];
                         }
-                        for (int l = 0; l < (int)value; l++)
+                        for (int j = 0; j < (int)value; j++)
                         {
                             afterSHL += '0';
                         }
-                            ACC = convertToBase10(afterSHL);
+                        ACC = Convert.ToInt16(convertToBase10(afterSHL));
+                        afterSHL = "";
                     }
                     else
                     {
@@ -301,10 +239,10 @@ namespace GeminiCore
                     break;
                 case "001001":
                     //NOTA, if acc is negative, should it become postive?
-                    string binACC2 = convertToBinary(ACC);
+                    string binACC = convertToBinary(ACC);
                     string resultACC = "";
-                    for (int k = 0; k < binACC2.Length; k++) {
-                        if (binACC2[k] == '0')
+                    for (int k = 0; k < binACC.Length; k++) {
+                        if (binACC[k] == '0')
                         {
                             resultACC += '1';
                         }
@@ -313,7 +251,7 @@ namespace GeminiCore
                             resultACC += '0';
                         }
                     }
-                    ACC = convertToBase10(resultACC);
+                    ACC = Convert.ToInt16(resultACC);
                     resultACC = "";
                     break;
                 //nothing happens to ACC for these 4 cases, it just jumps back to labelled line
@@ -322,7 +260,7 @@ namespace GeminiCore
 
                     break;
                 case "001011":
-                    //BE
+                    //BE, branch if ACC is zero
 
                     break;
                 case "001100":
@@ -335,18 +273,11 @@ namespace GeminiCore
                     break;
                 case "001110":
                     //NOP
-                    ACC = ACC + 0;
+                    ACC = (Int16) (ACC + 0);
                     break;
                 case "001111":
                     //HLT
-                    if (immediate)
-                    {
-                        ACC = convertToBase10(mem);
-                    }
-                    else
-                    {
-                        ACC = memoryBook[mem];
-                    }
+                    finished = true;
                     break;
             }
             index++;

@@ -17,7 +17,7 @@ namespace GeminiCore
     {
         List<string> binary = new List<string>();
 
-        Dictionary<string, string> labelLocationMap = new Dictionary<string, string>();
+        Dictionary<string, int> labelLocationMap = new Dictionary<string, int>();
         //LabelLocationMap.Add("LabelName", "LineNumber");
 
         public string FileToParse { get; set; }
@@ -25,6 +25,11 @@ namespace GeminiCore
         public IPE(string filename)
         {
             this.FileToParse = filename;
+        }
+
+        public Dictionary<string, int> getLabelLocationMap()
+        {
+            return labelLocationMap;
         }
 
         public List<string> ParseFile()
@@ -52,7 +57,7 @@ namespace GeminiCore
                    string immediate = "0";
                    string sign = "0";
                    string lineNum = convertToBinary(lineCounter);
-                   labelLocationMap.Add(label, lineNum); 
+                   labelLocationMap.Add(label, lineCounter); 
                    string opCode = instruction + immediate + sign + lineNum;
                    Console.WriteLine(opCode);
                    binary.Add(opCode);
@@ -149,7 +154,8 @@ namespace GeminiCore
                             {
                                 if (labelLocationMap.ContainsKey(address))
                                 {
-                                    mem = labelLocationMap[address];
+                                    int memVal = labelLocationMap[address];
+                                    mem = convertToBinary(memVal);
                                 }
                                 //op is the label name (string), need to keep track of each label name when first find it
                                 else
@@ -164,7 +170,7 @@ namespace GeminiCore
                         }
 
                     }
-                    else
+                    else 
                     {
                         //if no operand exists
                         string sign = "0";

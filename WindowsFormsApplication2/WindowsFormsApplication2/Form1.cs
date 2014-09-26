@@ -65,6 +65,7 @@ namespace WindowsFormsApplication2
                         createBinaryFile(finBinary);
                         myCPU.setBinary(binary);
                         myCPU.setBinary16(finBinary);
+                        myCPU.setLabelLocationMap(ipe.getLabelLocationMap());
                         
                     }
                     catch (Exception err)
@@ -118,8 +119,8 @@ namespace WindowsFormsApplication2
                 BinaryWriter writer = new BinaryWriter(save.OpenFile());
                 foreach (int i in binary)
                 {
-                    writer.Write(binary[i]);
-                 //   Console.WriteLine(binary[i].ToString());
+                    writer.Write(i);
+                    //Console.WriteLine(binary[i].ToString());
                 }
                 writer.Dispose();
                 writer.Close();
