@@ -62,6 +62,12 @@ namespace GeminiCore
             binary16 = list;
         }
 
+        public void runAll() {
+            for (int i = 0; i < binary.Count; i++)
+            {
+                nextInstruction();
+            }
+        }
         public void nextInstruction()
         {
             Console.WriteLine("index: " + index);
@@ -118,7 +124,7 @@ namespace GeminiCore
                     }
                     else if (immediate && !signed)
                     {
-                        ACC = Convert.ToInt16(mem);
+                        ACC = Convert.ToInt16(convertToBase10(mem));
                     }
                     else
                     {
@@ -341,7 +347,17 @@ namespace GeminiCore
                     //HLT
                     nextInst = "hlt";
                     finished = true;
+                    index = 0;
                     break;
+            }
+            if (index + 1 == binary.Count)
+            {
+                finished = true;
+                index = 0;
+            }
+            if (finished)
+            {
+                Console.WriteLine("finished");
             }
             #endregion
             index++;

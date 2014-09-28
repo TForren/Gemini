@@ -57,12 +57,12 @@
             this.label11 = new System.Windows.Forms.Label();
             this.BackgroundPicBox = new System.Windows.Forms.PictureBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.runAllButton = new System.Windows.Forms.Button();
             this.nextInstructionTable = new System.Windows.Forms.TableLayoutPanel();
             this.nextInstructionDisplayLabel = new System.Windows.Forms.Label();
             this.label12 = new System.Windows.Forms.Label();
             this.BinaryButton = new System.Windows.Forms.Button();
             this.LoadLabel = new System.Windows.Forms.Label();
+            this.runAllButton = new System.Windows.Forms.Button();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.BackgroundPicBox)).BeginInit();
             this.nextInstructionTable.SuspendLayout();
@@ -469,16 +469,6 @@
             this.label1.Text = "ACC:";
             this.label1.Click += new System.EventHandler(this.label1_Click);
             // 
-            // runAllButton
-            // 
-            this.runAllButton.Location = new System.Drawing.Point(473, 265);
-            this.runAllButton.Margin = new System.Windows.Forms.Padding(2);
-            this.runAllButton.Name = "runAllButton";
-            this.runAllButton.Size = new System.Drawing.Size(56, 19);
-            this.runAllButton.TabIndex = 6;
-            this.runAllButton.Text = "Run All";
-            this.runAllButton.UseVisualStyleBackColor = true;
-            // 
             // nextInstructionTable
             // 
             this.nextInstructionTable.BackColor = System.Drawing.Color.Transparent;
@@ -520,9 +510,9 @@
             this.label12.Location = new System.Drawing.Point(3, 0);
             this.label12.Name = "label12";
             this.label12.Padding = new System.Windows.Forms.Padding(1, 0, 0, 0);
-            this.label12.Size = new System.Drawing.Size(184, 29);
+            this.label12.Size = new System.Drawing.Size(129, 33);
             this.label12.TabIndex = 24;
-            this.label12.Text = "Next Instruction:";
+            this.label12.Text = "Current Instruction:";
             this.label12.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             this.label12.Click += new System.EventHandler(this.label12_Click_1);
             // 
@@ -547,15 +537,25 @@
             this.LoadLabel.TabIndex = 9;
             this.LoadLabel.Text = "Load:";
             // 
+            // runAllButton
+            // 
+            this.runAllButton.Location = new System.Drawing.Point(473, 265);
+            this.runAllButton.Name = "runAllButton";
+            this.runAllButton.Size = new System.Drawing.Size(56, 19);
+            this.runAllButton.TabIndex = 10;
+            this.runAllButton.Text = "Run All";
+            this.runAllButton.UseVisualStyleBackColor = true;
+            this.runAllButton.Click += new System.EventHandler(this.runAllButton_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(544, 296);
+            this.Controls.Add(this.runAllButton);
             this.Controls.Add(this.LoadLabel);
             this.Controls.Add(this.BinaryButton);
             this.Controls.Add(this.nextInstructionTable);
-            this.Controls.Add(this.runAllButton);
             this.Controls.Add(this.tableLayoutPanel1);
             this.Controls.Add(this.nextInstructionButton);
             this.Controls.Add(this.loadFileButton);
@@ -605,12 +605,12 @@
         private System.Windows.Forms.Label MDRLabel;
         private System.Windows.Forms.Label MARLabel;
         private System.Windows.Forms.Label PCLabel;
-        private System.Windows.Forms.Button runAllButton;
         private System.Windows.Forms.TableLayoutPanel nextInstructionTable;
         private System.Windows.Forms.Label label12;
         private System.Windows.Forms.Label nextInstructionDisplayLabel;
         private System.Windows.Forms.Button BinaryButton;
         private System.Windows.Forms.Label LoadLabel;
+        private System.Windows.Forms.Button runAllButton;
     }
 }
 

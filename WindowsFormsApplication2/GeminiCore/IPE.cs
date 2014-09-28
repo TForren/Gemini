@@ -35,6 +35,7 @@ namespace GeminiCore
         public List<string> ParseFile()
         {
             int lineCounter = 1;
+            int lineExceptionCounter = 1;
             var lines = File.ReadAllLines(this.FileToParse).ToList<string>();
 
             foreach (var line in lines)
@@ -113,12 +114,17 @@ namespace GeminiCore
                                     value = value + op[i];
                                 }
                             }
-                            int intVal = Convert.ToInt32(value);
-
-                            if (intVal < 0)
+                          
+                            Int16 intVal = Convert.ToInt16(value);
+                            if (intVal > 255)
                             {
+                                Console.WriteLine("OverflowException at line " + lineExceptionCounter);
+                            }
+                            else if (intVal < 0)
+                            {
+                                Console.WriteLine("Negative immediate Value at line " + lineExceptionCounter);
                                 sign = "1";
-                                intVal = Math.Abs(intVal);
+                                //intVal = Math.Abs(intVal);
                             }
                             else
                             {
@@ -147,7 +153,14 @@ namespace GeminiCore
                             }
                             if (op[0] == '$')
                             {
-                                mem = convertToBinary(Convert.ToInt32(address));
+                                if (Convert.ToInt16(address) > 255)
+                                {
+                                    Console.WriteLine("OverflowException at line " + lineExceptionCounter);
+                                }
+                                else
+                                {
+                                    mem = convertToBinary(Convert.ToInt16(address));
+                                }
                             }
                             //branches, jumps -- need to implement
                             else
@@ -207,7 +220,7 @@ namespace GeminiCore
                     lineCounter++;
                 }
 
-                //lineCounter++;
+                lineExceptionCounter++;
             }
             return binary;
         }

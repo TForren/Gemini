@@ -149,6 +149,7 @@ namespace WindowsFormsApplication2
             this.nextInstructionDisplayLabel.Text = this.myCPU.nextInst;
         }
 
+
         private void tableLayoutPanel1_Paint(object sender, PaintEventArgs e)
         {
 
@@ -247,6 +248,11 @@ namespace WindowsFormsApplication2
         private void label13_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void runAllButton_Click(object sender, EventArgs e)
+        {
+            myCPU.runAll();
         }
     }
 }
