@@ -14,7 +14,7 @@ namespace GeminiCore
     public class CPU
     {
         public Int16 ACC { get; private set; }
-        public int A = 546456; // test number
+        public int A; // test number
         public int B;
         public int Zero;
         public int One;
@@ -24,6 +24,11 @@ namespace GeminiCore
         public int TEMP;
         public int IR;
         public int CC;
+        public string nextInst;
+        public string dispImm;
+        public string dispLab;
+
+        public Int32 dispMem;
 
         private List<string> binary;
         private List<Int16> binary16;
@@ -51,6 +56,7 @@ namespace GeminiCore
         {
             binary = list;
         }
+
         public void setBinary16(List<Int16> list)
         {
             binary16 = list;
@@ -58,8 +64,8 @@ namespace GeminiCore
 
         public void nextInstruction()
         {
+            Console.WriteLine("index: " + index);
             string temp = binary[index];
-            Console.WriteLine("temp: " + temp);
             for (int i = 0; i < temp.Length; i++)
             {
                 if (i >= 0 && i <= 5)
@@ -80,19 +86,29 @@ namespace GeminiCore
                 }
 
             }
-            Console.WriteLine(instr + " " + imm + " " + sign + " " + mem);
+
             Boolean immediate = false;
             Boolean signed = false;
             if (imm == '1') {
                 immediate = true;
+                dispImm = "#$";
+            }
+            else{
+                dispImm = "$";
             }
             if (sign == '1')
             {
                 signed = true;
             }
             string binInstr = instr;
+            #region switch for each instruction
             switch (binInstr)
             {
+                case "100000":
+                    var labelName = LabelLocationMap.FirstOrDefault(x => x.Value == (int)(convertToBase10(mem)));
+                    //Console.WriteLine(labelName);  
+                    nextInst = labelName.Key + ":";
+                    break;
                 case "000000":
                     //LDA
                     if (immediate && signed)
@@ -108,6 +124,8 @@ namespace GeminiCore
                     {
                         ACC = memoryBook[mem];
                     }
+                    dispMem = Convert.ToInt32(convertToBase10(mem));
+                    nextInst = "lda " + dispImm + dispMem;
                     break;
                 case "000001":
                     //STA
@@ -119,6 +137,9 @@ namespace GeminiCore
                     {
                         memoryBook[mem] = ACC;
                     }
+
+                    dispMem = Convert.ToInt32(convertToBase10(mem));
+                    nextInst = "sta " + dispImm + dispMem;
                     break;
                 case "000010":
                     //ADD
@@ -134,6 +155,8 @@ namespace GeminiCore
                     {
                         ACC = (Int16)(ACC + memoryBook[mem]);
                     }
+                    dispMem = Convert.ToInt32(convertToBase10(mem));
+                    nextInst = "add " + dispImm + dispMem;
                     break;
                 case "000011":
                     //SUB
@@ -149,6 +172,8 @@ namespace GeminiCore
                     {
                         ACC = (Int16) (ACC - memoryBook[mem]);
                     }
+                    dispMem = Convert.ToInt32(convertToBase10(mem));
+                    nextInst = "sub " + dispImm + dispMem;
                     break;
                 case "000100":
                     //mul
@@ -164,6 +189,8 @@ namespace GeminiCore
                     {
                         ACC = (Int16)(ACC * memoryBook[mem]);
                     }
+                    dispMem = Convert.ToInt32(convertToBase10(mem));
+                    nextInst = "mul " + dispImm + dispMem;
                     break;
                 case "000101":
                     //div
@@ -183,9 +210,11 @@ namespace GeminiCore
                     {
                         ACC = (Int16)(ACC / memoryBook[mem]);
                     }
+                    dispMem = Convert.ToInt32(convertToBase10(mem));
+                    nextInst = "div " + dispImm + dispMem;
                     break;
                 case "000110":
-                    //& is and operation
+                    //and
                     if (immediate && signed)
                     {
                         //exception
@@ -198,6 +227,8 @@ namespace GeminiCore
                     {
                         ACC = (Int16)(ACC & memoryBook[mem]);
                     }
+                    dispMem = Convert.ToInt32(convertToBase10(mem));
+                    nextInst = "and " + dispImm + dispMem;
                     break;
                 case "000111":
                     //or
@@ -213,6 +244,8 @@ namespace GeminiCore
                     {
                         ACC = (Int16)(ACC | memoryBook[mem]);
                     }
+                    dispMem = Convert.ToInt32(convertToBase10(mem));
+                    nextInst = "or " + dispImm + dispMem;
                     break;
                 case "001000":
                     //SHL, if value is negative, should we shift right?
@@ -236,11 +269,14 @@ namespace GeminiCore
                     {
                         //throw exception at "index" line
                     }
+                    dispMem = Convert.ToInt32(convertToBase10(mem));
+                    nextInst = "shl " + dispImm + dispMem;
                     break;
                 case "001001":
                     //NOTA, if acc is negative, should it become postive?
                     string binACC = convertToBinary(ACC);
                     string resultACC = "";
+                    double final = 0;
                     for (int k = 0; k < binACC.Length; k++) {
                         if (binACC[k] == '0')
                         {
@@ -251,60 +287,87 @@ namespace GeminiCore
                             resultACC += '0';
                         }
                     }
-                    ACC = Convert.ToInt16(resultACC);
+                    final = convertToBase10(resultACC);
+                    ACC = Convert.ToInt16(final);
                     resultACC = "";
+                    nextInst = "nota";
                     break;
                 //nothing happens to ACC for these 4 cases, it just jumps back to labelled line
                 case "001010":
                     //BA
-
+                    labelName = LabelLocationMap.FirstOrDefault(x => x.Value == (int)(convertToBase10(mem)));
+                    dispLab = labelName.Key;
+                    index = labelName.Value - 1;
+                    Console.WriteLine("Label Name: " + labelName);
+                    nextInst = "ba " + dispLab;
                     break;
                 case "001011":
                     //BE, branch if ACC is zero
-
+                    labelName = LabelLocationMap.FirstOrDefault(x => x.Value == (int)(convertToBase10(mem)));
+                    dispLab = labelName.Key;
+                    if (ACC == 0)
+                    {
+                        index = labelName.Value - 1;
+                    }
+                    nextInst = "be " + dispLab;
                     break;
                 case "001100":
                     //BL
-
+                    labelName = LabelLocationMap.FirstOrDefault(x => x.Value == (int)(convertToBase10(mem)));
+                    dispLab = labelName.Key;
+                    if (ACC < 0)
+                    {
+                        index = labelName.Value - 1;
+                    }
+                    nextInst = "bl " + dispLab;
                     break;
                 case "001101":
                     //BG
-
+                    labelName = LabelLocationMap.FirstOrDefault(x => x.Value == (int)(convertToBase10(mem)));
+                    dispLab = labelName.Key;
+                    Console.WriteLine("line num: " + labelName.Value);
+                    if (ACC > 0)
+                    {
+                        index = labelName.Value - 1;
+                    }
+                    nextInst = "bg " + dispLab;
                     break;
                 case "001110":
                     //NOP
                     ACC = (Int16) (ACC + 0);
+                    nextInst = "nop";
                     break;
                 case "001111":
                     //HLT
+                    nextInst = "hlt";
                     finished = true;
                     break;
             }
+            #endregion
             index++;
             instr = "";
             mem = "";
         }
 
+        #region convertToBase10
         public double convertToBase10(string x)
         {
             double num = 0;
             int exp = x.Length - 1;
-            Console.WriteLine("x: " + x);
             for (int i = 0; i < x.Length; i++)
             {
                 if (x[i] == '1')
                 {
-                    Console.WriteLine("x[" + i +"] = " + x[i]);
                     num = num + Math.Pow(2, exp);
-                    Console.WriteLine("exp: " + exp);
-                    Console.WriteLine("num: " + num);
                 }
                 exp--;
             }
                 return num;
         }
+        #endregion
 
         //if this function doesn't work, it's because changed parameter from int to double
+        #region convertToBinary
         public string convertToBinary(double x)
         {
             ArrayList bin = new ArrayList();
@@ -336,7 +399,9 @@ namespace GeminiCore
 
             return result;
         }
+        #endregion
 
+        #region negateBinary
         public string negateBinary(string x)
         {
             string result = "";
@@ -357,5 +422,8 @@ namespace GeminiCore
             result = convertToBinary(curr);
             return result;
         }
+        #endregion
+
+
     }
 }

@@ -61,7 +61,7 @@
             this.nextInstructionTable = new System.Windows.Forms.TableLayoutPanel();
             this.nextInstructionDisplayLabel = new System.Windows.Forms.Label();
             this.label12 = new System.Windows.Forms.Label();
-            this.button1 = new System.Windows.Forms.Button();
+            this.BinaryButton = new System.Windows.Forms.Button();
             this.LoadLabel = new System.Windows.Forms.Label();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.BackgroundPicBox)).BeginInit();
@@ -493,6 +493,7 @@
             this.nextInstructionTable.RowCount = 2;
             this.nextInstructionTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.nextInstructionTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.nextInstructionTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.nextInstructionTable.Size = new System.Drawing.Size(200, 66);
             this.nextInstructionTable.TabIndex = 7;
             // 
@@ -508,6 +509,7 @@
             this.nextInstructionDisplayLabel.TabIndex = 25;
             this.nextInstructionDisplayLabel.Text = "- - - - - - - - - - ";
             this.nextInstructionDisplayLabel.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.nextInstructionDisplayLabel.Click += new System.EventHandler(this.nextInstructionDisplayLabel_Click);
             // 
             // label12
             // 
@@ -524,15 +526,15 @@
             this.label12.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             this.label12.Click += new System.EventHandler(this.label12_Click_1);
             // 
-            // button1
+            // BinaryButton
             // 
-            this.button1.Location = new System.Drawing.Point(473, 71);
-            this.button1.Margin = new System.Windows.Forms.Padding(2);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(56, 20);
-            this.button1.TabIndex = 8;
-            this.button1.Text = "Binary";
-            this.button1.UseVisualStyleBackColor = true;
+            this.BinaryButton.Location = new System.Drawing.Point(473, 71);
+            this.BinaryButton.Margin = new System.Windows.Forms.Padding(2);
+            this.BinaryButton.Name = "BinaryButton";
+            this.BinaryButton.Size = new System.Drawing.Size(56, 20);
+            this.BinaryButton.TabIndex = 8;
+            this.BinaryButton.Text = "Binary";
+            this.BinaryButton.UseVisualStyleBackColor = true;
             // 
             // LoadLabel
             // 
@@ -551,7 +553,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(544, 296);
             this.Controls.Add(this.LoadLabel);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.BinaryButton);
             this.Controls.Add(this.nextInstructionTable);
             this.Controls.Add(this.runAllButton);
             this.Controls.Add(this.tableLayoutPanel1);
@@ -607,7 +609,7 @@
         private System.Windows.Forms.TableLayoutPanel nextInstructionTable;
         private System.Windows.Forms.Label label12;
         private System.Windows.Forms.Label nextInstructionDisplayLabel;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button BinaryButton;
         private System.Windows.Forms.Label LoadLabel;
     }
 }

@@ -51,7 +51,7 @@ namespace GeminiCore
                 if (labelStmtMatch.Success)
                 {
                    var label = labelStmtMatch.Groups["label"].Value;
-                   Console.WriteLine("Label: " + label);
+                   //Console.WriteLine("Label: " + label);
                     
                    string instruction = "100000";
                    string immediate = "0";
@@ -59,15 +59,15 @@ namespace GeminiCore
                    string lineNum = convertToBinary(lineCounter);
                    labelLocationMap.Add(label, lineCounter); 
                    string opCode = instruction + immediate + sign + lineNum;
-                   Console.WriteLine(opCode);
+                   //Console.WriteLine(opCode);
                    binary.Add(opCode);
-                             
+                   lineCounter++;          
                 }
                 else if (opcodeStmtMatch.Success)
                 {
                     var opcode = opcodeStmtMatch.Groups["opcode"].Value;
                     var operand = opcodeStmtMatch.Groups["operand"].Value;
-                    Console.WriteLine("Opcode: " + opcode + " Operand: " + operand);
+                    //Console.WriteLine("Opcode: " + opcode + " Operand: " + operand);
 
                     string binInstr = "";
                     string immediate = "";
@@ -126,7 +126,7 @@ namespace GeminiCore
                             }
                             mem = convertToBinary(intVal);
                             string opCode = binInstr + immediate + sign + mem;
-                            Console.WriteLine(opCode);
+                            //Console.WriteLine(opCode);
                             binary.Add(opCode);
                         }
                         //immediate == 0
@@ -165,7 +165,7 @@ namespace GeminiCore
                                 }
                             }
                             string opCode = binInstr + immediate + sign + mem;
-                            Console.WriteLine(opCode);
+                            //Console.WriteLine(opCode);
                             binary.Add(opCode);
                         }
 
@@ -176,15 +176,16 @@ namespace GeminiCore
                         string sign = "0";
                         string mem = "00000000";
                         string opCode = binInstr + immediate + sign + mem;
-                        Console.WriteLine(opCode);
+                       // Console.WriteLine(opCode);
                         binary.Add(opCode);
                     }
+                    lineCounter++;
                     
                 }
                 else if (onlyOpStmtMatch.Success)
                 {
                     var opcode = onlyOpStmtMatch.Groups["opcode"].Value;
-                    Console.WriteLine("onlyOpcode: " + opcode);
+                    //Console.WriteLine("onlyOpcode: " + opcode);
 
                     string currIn = opcode;
                     string binInstr = "";
@@ -201,11 +202,12 @@ namespace GeminiCore
                             break;
                     }
                     string opCode = binInstr + "00" + "00000000";
-                    Console.WriteLine(opCode);
+                   // Console.WriteLine(opCode);
                     binary.Add(opCode);
+                    lineCounter++;
                 }
 
-                lineCounter++;
+                //lineCounter++;
             }
             return binary;
         }
