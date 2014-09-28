@@ -41,9 +41,9 @@ namespace GeminiCore
             foreach (var line in lines)
             {
                 #region Regex stuff. Puts capture groups in variables
-                Regex labelStmtFormat = new Regex(@"^(?<label>.*)\s*:$");
-                Regex opcodeStmtFormat = new Regex(@"^\s*(?<opcode>[a-z]{2,3})\s(?<operand>\S*)");
-                Regex onlyOpStmtFormat = new Regex(@"^\s*(?<opcode>[a-z]{2,4})");
+                Regex labelStmtFormat = new Regex(@"^(?<label>.*)\s*:\s*(?<comments>\S*)");
+                Regex opcodeStmtFormat = new Regex(@"^\s*(?<opcode>[a-z]{2,3})\s(?<operand>\S*)\s*(?<comments>\S*)");
+                Regex onlyOpStmtFormat = new Regex(@"^\s*(?<opcode>[a-z]{2,4})\s*(?<comments>\S*)");
                 var labelStmtMatch = labelStmtFormat.Match(line);
                 var opcodeStmtMatch = opcodeStmtFormat.Match(line);
                 var onlyOpStmtMatch = onlyOpStmtFormat.Match(line);
