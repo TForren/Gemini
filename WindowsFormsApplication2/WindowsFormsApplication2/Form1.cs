@@ -79,7 +79,7 @@ namespace WindowsFormsApplication2
         {
             double num = 0;
             int exp = x.Length - 1;
-            Console.WriteLine("x: " + x);
+            //Console.WriteLine("x: " + x);
             for (int i = 0; i < x.Length; i++)
             {
                 if (x[i] == '1')
@@ -146,6 +146,7 @@ namespace WindowsFormsApplication2
             this.TEMPLabel.Text = this.myCPU.TEMP.ToString();
             this.IRLabel.Text = this.myCPU.IR.ToString();
             this.CCLabel.Text = this.myCPU.CC.ToString();
+            this.nextInstructionDisplayLabel.Text = this.myCPU.nextInst;
         }
 
         private void tableLayoutPanel1_Paint(object sender, PaintEventArgs e)
@@ -234,6 +235,16 @@ namespace WindowsFormsApplication2
         }
 
         private void label12_Click_1(object sender, EventArgs e)
+        {
+
+        }
+
+        private void nextInstructionDisplayLabel_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label13_Click(object sender, EventArgs e)
         {
 
         }
