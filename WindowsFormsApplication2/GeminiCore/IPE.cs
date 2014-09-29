@@ -11,6 +11,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
+
 namespace GeminiCore
 {
     public class IPE
@@ -19,6 +20,8 @@ namespace GeminiCore
 
         Dictionary<string, int> labelLocationMap = new Dictionary<string, int>();
         //LabelLocationMap.Add("LabelName", "LineNumber");
+        public Boolean invalidComment;
+        public Boolean broken = false;
 
         public string FileToParse { get; set; }
 
@@ -32,8 +35,48 @@ namespace GeminiCore
             return labelLocationMap;
         }
 
+        public void ParseForLabels()
+        {
+            int lineCounter = 1;
+            var lineExceptionCounter = 1;
+            var lines = File.ReadAllLines(this.FileToParse).ToList<string>();
+            foreach (var line in lines)
+            {
+                Regex labelStmtFormat = new Regex(@"^(?<label>.*)\s*:\s*(?<comments>\S*)");
+                var labelStmtMatch = labelStmtFormat.Match(line);
+                if (labelStmtMatch.Success)
+                {
+                    if (labelStmtMatch.Groups["comments"].Value != "")
+                    {
+                        if (labelStmtMatch.Groups["comments"].Value[0] != '!')
+                        {
+                            Console.WriteLine("InvalidCommentException at line " + lineExceptionCounter);
+                            broken = true;
+                        }
+                    }
+
+                    var label = labelStmtMatch.Groups["label"].Value;
+                    //Console.WriteLine("Label: " + label);
+
+                    string instruction = "100000";
+                    string immediate = "0";
+                    string sign = "0";
+                    string lineNum = convertToBinary(lineCounter);
+                    labelLocationMap.Add(label, lineCounter);
+                    string opCode = instruction + immediate + sign + lineNum;
+                    //Console.WriteLine(opCode);
+                    //binary.Add(opCode);
+                    
+                }
+                lineExceptionCounter++;
+                lineCounter++;
+            }
+
+        }
+
         public List<string> ParseFile()
         {
+            ParseForLabels();
             int lineCounter = 1;
             int lineExceptionCounter = 1;
             var lines = File.ReadAllLines(this.FileToParse).ToList<string>();
@@ -43,14 +86,27 @@ namespace GeminiCore
                 #region Regex stuff. Puts capture groups in variables
                 Regex labelStmtFormat = new Regex(@"^(?<label>.*)\s*:\s*(?<comments>\S*)");
                 Regex opcodeStmtFormat = new Regex(@"^\s*(?<opcode>[a-z]{2,3})\s(?<operand>\S*)\s*(?<comments>\S*)");
-                Regex onlyOpStmtFormat = new Regex(@"^\s*(?<opcode>[a-z]{2,4})\s*(?<comments>\S*)");
+                Regex onlyOpStmtFormat = new Regex(@"^\s*(?<opcode>\b(nota|nop|hlt))\s*(?<comments>\S*)");
                 var labelStmtMatch = labelStmtFormat.Match(line);
                 var opcodeStmtMatch = opcodeStmtFormat.Match(line);
                 var onlyOpStmtMatch = onlyOpStmtFormat.Match(line);
+                
+               
+                
                 #endregion
 
                 if (labelStmtMatch.Success)
                 {
+                    Console.WriteLine("label: " + labelStmtMatch);
+                    if (labelStmtMatch.Groups["comments"].Value != "")
+                    {
+                        if (labelStmtMatch.Groups["comments"].Value[0] != '!')
+                        {
+                            Console.WriteLine("InvalidCommentExcpetion at line " + lineExceptionCounter) ;
+                            broken = true;
+                        }
+                    }
+
                    var label = labelStmtMatch.Groups["label"].Value;
                    //Console.WriteLine("Label: " + label);
                     
@@ -58,14 +114,27 @@ namespace GeminiCore
                    string immediate = "0";
                    string sign = "0";
                    string lineNum = convertToBinary(lineCounter);
-                   labelLocationMap.Add(label, lineCounter); 
+                   labelLocationMap[label] = lineCounter;
+                   Console.WriteLine("label: " + label);
+                   Console.WriteLine("key: " + labelLocationMap[label]);
                    string opCode = instruction + immediate + sign + lineNum;
                    //Console.WriteLine(opCode);
                    binary.Add(opCode);
-                   lineCounter++;          
+                   lineCounter++;
                 }
-                else if (opcodeStmtMatch.Success)
+            
+
+                if (opcodeStmtMatch.Success)
                 {
+                    Console.WriteLine("opcode: " + opcodeStmtMatch);
+                    if (opcodeStmtMatch.Groups["comments"].Value != "")
+                    {
+                        if (opcodeStmtMatch.Groups["comments"].Value[0] != '!')
+                        {
+                            Console.WriteLine("InvalidCommentException at line " + lineExceptionCounter);
+                            broken = true;
+                        }
+                    }
                     var opcode = opcodeStmtMatch.Groups["opcode"].Value;
                     var operand = opcodeStmtMatch.Groups["operand"].Value;
                     //Console.WriteLine("Opcode: " + opcode + " Operand: " + operand);
@@ -119,10 +188,12 @@ namespace GeminiCore
                             if (intVal > 255)
                             {
                                 Console.WriteLine("OverflowException at line " + lineExceptionCounter);
+                                broken = true;
                             }
                             else if (intVal < 0)
                             {
                                 Console.WriteLine("Negative immediate Value at line " + lineExceptionCounter);
+                                broken = true;
                                 sign = "1";
                                 //intVal = Math.Abs(intVal);
                             }
@@ -156,6 +227,7 @@ namespace GeminiCore
                                 if (Convert.ToInt16(address) > 255)
                                 {
                                     Console.WriteLine("OverflowException at line " + lineExceptionCounter);
+                                    broken = true;
                                 }
                                 else
                                 {
@@ -165,9 +237,11 @@ namespace GeminiCore
                             //branches, jumps -- need to implement
                             else
                             {
+                                
                                 if (labelLocationMap.ContainsKey(address))
                                 {
                                     int memVal = labelLocationMap[address];
+                                    Console.WriteLine("memVal: " + memVal);
                                     mem = convertToBinary(memVal);
                                 }
                                 //op is the label name (string), need to keep track of each label name when first find it
@@ -175,6 +249,7 @@ namespace GeminiCore
                                 {
                                     //label doesn't exist
                                     mem = "00000000";
+                                    Console.WriteLine("label doesn't exist");
                                 }
                             }
                             string opCode = binInstr + immediate + sign + mem;
@@ -197,6 +272,15 @@ namespace GeminiCore
                 }
                 else if (onlyOpStmtMatch.Success)
                 {
+                    Console.WriteLine("onlyOp: " + onlyOpStmtMatch);
+                    if (onlyOpStmtMatch.Groups["comments"].Value != "")
+                    {
+                        if (onlyOpStmtMatch.Groups["comments"].Value[0] != '!')
+                        {
+                            Console.WriteLine("InvalidCommentException at line " + lineExceptionCounter);
+                            broken = true;
+                        }
+                    }
                     var opcode = onlyOpStmtMatch.Groups["opcode"].Value;
                     //Console.WriteLine("onlyOpcode: " + opcode);
 
@@ -221,6 +305,7 @@ namespace GeminiCore
                 }
 
                 lineExceptionCounter++;
+                //lineCounter++;
             }
             return binary;
         }
@@ -234,6 +319,24 @@ namespace GeminiCore
                 }
             }
         }
+
+        #region convertToBase10
+        public int convertToBase10(string x)
+        {
+            int num = 0;
+            int exp = x.Length - 1;
+            for (int i = 0; i < x.Length; i++)
+            {
+                if (x[i] == '1')
+                {
+                    num = (int)(num + Math.Pow(2, exp));
+                }
+                exp--;
+            }
+            return num;
+        }
+        #endregion
+
         public string convertToBinary(int x)
         {
             ArrayList bin = new ArrayList();

@@ -66,11 +66,24 @@ namespace WindowsFormsApplication2
                         myCPU.setBinary(binary);
                         myCPU.setBinary16(finBinary);
                         myCPU.setLabelLocationMap(ipe.getLabelLocationMap());
-                        
+                        foreach( KeyValuePair<string, int> kvp in ipe.getLabelLocationMap() )
+                        {
+                            Console.WriteLine("Key = {0}, Value = {1}", 
+                                kvp.Key, kvp.Value);
+                        }
+ //                       for (int i = 0; i < ipe.getLabelLocationMap().Count; i++)
+   //                     {
+     //                       Console.WriteLine("map key: " + ipe.getLabelLocationMap().Keys[i])
+       //                 }
+         //                   Console.WriteLine("map.keys: " + ipe.getLabelLocationMap());
+                        //Console.WriteLine("map.value: " + ipe.getLabelLocationMap().Values);
+                        myCPU.PC = 0;
+                        myCPU.finished = false;
+                        ipe.broken = false;
                     }
                     catch (Exception err)
                     {
-                        // show a dialog with error
+                       // System.Windows.Forms.MessageBox.Show(err.Message);
                     }
                 }
             }
@@ -131,21 +144,30 @@ namespace WindowsFormsApplication2
 
         private void nextInstructionButton_Click(object sender, EventArgs e)
         {
-            this.myCPU.nextInstruction();
-            this.setCPUValuesToView();
+            if (!myCPU.finished)
+            {
+                this.myCPU.nextInstruction();
+                this.setCPUValuesToView();
+            }
+            else
+            {
+                System.Windows.Forms.MessageBox.Show("Finished Code");
+                myCPU.resetFields();
+                this.setCPUValuesToView();
+            }
         }
 
         public void setCPUValuesToView()
         {
             this.accLabel.Text = this.myCPU.ACC.ToString();
-            this.ALabel.Text = this.myCPU.A.ToString();
-            this.BLabel.Text = this.myCPU.B.ToString();
+            this.ALabel.Text = this.myCPU.A;
+            this.BLabel.Text = this.myCPU.B;
             this.PCLabel.Text = this.myCPU.PC.ToString();
-            this.MARLabel.Text = this.myCPU.MAR.ToString();
-            this.MDRLabel.Text = this.myCPU.MDR.ToString();
-            this.TEMPLabel.Text = this.myCPU.TEMP.ToString();
-            this.IRLabel.Text = this.myCPU.IR.ToString();
-            this.CCLabel.Text = this.myCPU.CC.ToString();
+            this.MARLabel.Text = this.myCPU.MAR;
+            this.MDRLabel.Text = this.myCPU.MDR;
+            this.TEMPLabel.Text = this.myCPU.TEMP;
+            this.IRLabel.Text = this.myCPU.IR;
+            this.CCLabel.Text = this.myCPU.CC;
             this.nextInstructionDisplayLabel.Text = this.myCPU.nextInst;
         }
 
@@ -252,7 +274,15 @@ namespace WindowsFormsApplication2
 
         private void runAllButton_Click(object sender, EventArgs e)
         {
-            myCPU.runAll();
+            while (!myCPU.finished)
+            {
+                //myCPU.runAll();
+                myCPU.nextInstruction();
+                this.setCPUValuesToView();
+            }
+            System.Windows.Forms.MessageBox.Show("Finished Code");
+            myCPU.resetFields();
+            this.setCPUValuesToView();
         }
     }
 }

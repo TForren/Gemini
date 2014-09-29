@@ -14,16 +14,16 @@ namespace GeminiCore
     public class CPU
     {
         public Int16 ACC { get; private set; }
-        public int A; // test number
-        public int B;
+        public string A;
+        public string B;
         public int Zero;
         public int One;
-        public int PC;
-        public int MAR;
-        public int MDR;
-        public int TEMP;
-        public int IR;
-        public int CC;
+        public int PC = 0;
+        public string MAR;
+        public string MDR;
+        public string TEMP;
+        public string IR;
+        public string CC;
         public string nextInst;
         public string dispImm;
         public string dispLab;
@@ -33,12 +33,12 @@ namespace GeminiCore
         private List<string> binary;
         private List<Int16> binary16;
         private Dictionary<string, int> LabelLocationMap;
-        private int index = 0;
         private string instr = "";
         private char imm = ' ';
         private char sign = ' ';
         private string mem = "";
-        Boolean finished = false;
+        public Boolean finished = false;
+        public Boolean broken = false;
 
         public CPU()
         {
@@ -62,16 +62,36 @@ namespace GeminiCore
             binary16 = list;
         }
 
-        public void runAll() {
+        public void runAll()
+        {
             for (int i = 0; i < binary.Count; i++)
             {
                 nextInstruction();
             }
         }
+
+        public void resetFields()
+        {
+            ACC = 0;
+            A = "- - - - - - - - -";
+            B = "- - - - - - - - -";
+            Zero = 0;
+            One = 1;
+            PC = 0;
+            MAR = "- - - - - - - - -";
+            MDR = "- - - - - - - - -";
+            TEMP = "- - - - - - - - -";
+            IR = "- - - - - - - - -";
+            CC = "- - - - - - - - -";
+            nextInst = "- - - - - - - - -";
+            finished = false;
+            broken = false;
+        }
+
+
         public void nextInstruction()
         {
-            Console.WriteLine("index: " + index);
-            string temp = binary[index];
+            string temp = binary[PC];
             for (int i = 0; i < temp.Length; i++)
             {
                 if (i >= 0 && i <= 5)
@@ -93,13 +113,23 @@ namespace GeminiCore
 
             }
 
+            A = instr;
+            B = mem;
+            if (mem == "")
+            {
+                MAR = "- - - - - - ";
+                MDR = "- - - - - - ";
+            }
+
             Boolean immediate = false;
             Boolean signed = false;
-            if (imm == '1') {
+            if (imm == '1')
+            {
                 immediate = true;
                 dispImm = "#$";
             }
-            else{
+            else
+            {
                 dispImm = "$";
             }
             if (sign == '1')
@@ -114,6 +144,8 @@ namespace GeminiCore
                     var labelName = LabelLocationMap.FirstOrDefault(x => x.Value == (int)(convertToBase10(mem)));
                     //Console.WriteLine(labelName);  
                     nextInst = labelName.Key + ":";
+                    MAR = "- - - - - - -";
+                    MDR = "- - - - - - -";
                     break;
                 case "000000":
                     //LDA
@@ -125,10 +157,14 @@ namespace GeminiCore
                     else if (immediate && !signed)
                     {
                         ACC = Convert.ToInt16(convertToBase10(mem));
+                        MAR = "- - - - - - -";
+                        MDR = mem;
                     }
                     else
                     {
                         ACC = memoryBook[mem];
+                        MAR = mem;
+                        MDR = convertToBinary(memoryBook[mem]);
                     }
                     dispMem = Convert.ToInt32(convertToBase10(mem));
                     nextInst = "lda " + dispImm + dispMem;
@@ -137,11 +173,13 @@ namespace GeminiCore
                     //STA
                     if (immediate)
                     {
-                        //throw exception, index is line number
+                        //throw exception, PC is line number
                     }
                     else
                     {
                         memoryBook[mem] = ACC;
+                        MAR = mem;
+                        MDR = convertToBinary(memoryBook[mem]);
                     }
 
                     dispMem = Convert.ToInt32(convertToBase10(mem));
@@ -156,10 +194,14 @@ namespace GeminiCore
                     else if (immediate && !signed)
                     {
                         ACC += Convert.ToInt16(mem);
+                        MAR = "- - - - - - ";
+                        MDR = mem;
                     }
                     else
                     {
                         ACC = (Int16)(ACC + memoryBook[mem]);
+                        MAR = mem;
+                        MDR = convertToBinary(memoryBook[mem]);
                     }
                     dispMem = Convert.ToInt32(convertToBase10(mem));
                     nextInst = "add " + dispImm + dispMem;
@@ -172,11 +214,15 @@ namespace GeminiCore
                     }
                     else if (immediate && !signed)
                     {
-                        ACC = (Int16) (ACC - Convert.ToInt16(mem));
+                        ACC = (Int16)(ACC - Convert.ToInt16(mem));
+                        MAR = "- - - - - - - ";
+                        MDR = mem;
                     }
                     else
                     {
-                        ACC = (Int16) (ACC - memoryBook[mem]);
+                        ACC = (Int16)(ACC - memoryBook[mem]);
+                        MAR = mem;
+                        MDR = convertToBinary(memoryBook[mem]);
                     }
                     dispMem = Convert.ToInt32(convertToBase10(mem));
                     nextInst = "sub " + dispImm + dispMem;
@@ -189,11 +235,15 @@ namespace GeminiCore
                     }
                     else if (immediate && !signed)
                     {
-                        ACC = (Int16) (ACC * Convert.ToInt16(mem));
+                        ACC = (Int16)(ACC * Convert.ToInt16(mem));
+                        MAR = "- - - - - - - ";
+                        MDR = mem;
                     }
                     else
                     {
                         ACC = (Int16)(ACC * memoryBook[mem]);
+                        MAR = mem;
+                        MDR = convertToBinary(memoryBook[mem]);
                     }
                     dispMem = Convert.ToInt32(convertToBase10(mem));
                     nextInst = "mul " + dispImm + dispMem;
@@ -211,10 +261,14 @@ namespace GeminiCore
                     else if (immediate && !signed)
                     {
                         ACC = (Int16)(ACC / Convert.ToInt16(mem));
+                        MAR = "- - - - - - - ";
+                        MDR = mem;
                     }
                     else
                     {
                         ACC = (Int16)(ACC / memoryBook[mem]);
+                        MAR = mem;
+                        MDR = convertToBinary(memoryBook[mem]);
                     }
                     dispMem = Convert.ToInt32(convertToBase10(mem));
                     nextInst = "div " + dispImm + dispMem;
@@ -227,11 +281,15 @@ namespace GeminiCore
                     }
                     else if (immediate && !signed)
                     {
-                        ACC = (Int16) (ACC & Convert.ToInt16(mem));
+                        ACC = (Int16)(ACC & Convert.ToInt16(mem));
+                        MAR = "- - - - - - -";
+                        MDR = mem;
                     }
                     else
                     {
                         ACC = (Int16)(ACC & memoryBook[mem]);
+                        MAR = mem;
+                        MDR = convertToBinary(memoryBook[mem]);
                     }
                     dispMem = Convert.ToInt32(convertToBase10(mem));
                     nextInst = "and " + dispImm + dispMem;
@@ -245,10 +303,14 @@ namespace GeminiCore
                     else if (immediate && !signed)
                     {
                         ACC = (Int16)(ACC | Convert.ToInt16(mem));
+                        MAR = "- - - - - - -";
+                        MDR = mem;
                     }
                     else
                     {
                         ACC = (Int16)(ACC | memoryBook[mem]);
+                        MAR = mem;
+                        MDR = convertToBinary(memoryBook[mem]);
                     }
                     dispMem = Convert.ToInt32(convertToBase10(mem));
                     nextInst = "or " + dispImm + dispMem;
@@ -269,11 +331,13 @@ namespace GeminiCore
                             afterSHL += '0';
                         }
                         ACC = Convert.ToInt16(convertToBase10(afterSHL));
+                        MAR = "- - - - - - -";
+                        MDR = mem;
                         afterSHL = "";
                     }
                     else
                     {
-                        //throw exception at "index" line
+                        //throw exception at "PC" line
                     }
                     dispMem = Convert.ToInt32(convertToBase10(mem));
                     nextInst = "shl " + dispImm + dispMem;
@@ -283,7 +347,8 @@ namespace GeminiCore
                     string binACC = convertToBinary(ACC);
                     string resultACC = "";
                     double final = 0;
-                    for (int k = 0; k < binACC.Length; k++) {
+                    for (int k = 0; k < binACC.Length; k++)
+                    {
                         if (binACC[k] == '0')
                         {
                             resultACC += '1';
@@ -295,6 +360,8 @@ namespace GeminiCore
                     }
                     final = convertToBase10(resultACC);
                     ACC = Convert.ToInt16(final);
+                    MAR = "- - - - - - ";
+                    MDR = "- - - - - - ";
                     resultACC = "";
                     nextInst = "nota";
                     break;
@@ -303,19 +370,38 @@ namespace GeminiCore
                     //BA
                     labelName = LabelLocationMap.FirstOrDefault(x => x.Value == (int)(convertToBase10(mem)));
                     dispLab = labelName.Key;
-                    index = labelName.Value - 1;
-                    Console.WriteLine("Label Name: " + labelName);
+                    PC = labelName.Value-1;
+                    Console.WriteLine("Label Name in BA: " + labelName);
+                    Console.WriteLine("dispLab: " + dispLab);
+
                     nextInst = "ba " + dispLab;
+                    MAR = "- - - - - - ";
+                    MDR = "- - - - - - ";
                     break;
                 case "001011":
                     //BE, branch if ACC is zero
-                    labelName = LabelLocationMap.FirstOrDefault(x => x.Value == (int)(convertToBase10(mem)));
+                    labelName = LabelLocationMap.FirstOrDefault(x => x.Value == ((int)(convertToBase10(mem))));
                     dispLab = labelName.Key;
+                    int newMem = (int)(convertToBase10(mem));
+                    Console.WriteLine("newmem " + newMem);
+                    //int lineValue = 0;
+                    //foreach (KeyValuePair<string, int> pair in LabelLocationMap)
+                    //{
+                        //if (newMem == pair.Value)
+                        //{
+                            //dispLab = pair.Key;
+                          //  lineValue = pair.Value;
+                       // }
+                  //  }
                     if (ACC == 0)
                     {
-                        index = labelName.Value - 1;
+                        PC = newMem-1;
                     }
+                    Console.WriteLine("Label Name in BE: " + labelName);
+                    Console.WriteLine("dispLab: " + dispLab);
                     nextInst = "be " + dispLab;
+                    MAR = "- - - - - - ";
+                    MDR = "- - - - - - ";
                     break;
                 case "001100":
                     //BL
@@ -323,44 +409,51 @@ namespace GeminiCore
                     dispLab = labelName.Key;
                     if (ACC < 0)
                     {
-                        index = labelName.Value - 1;
+                        PC = labelName.Value-1;
                     }
                     nextInst = "bl " + dispLab;
+                    MAR = "- - - - - - ";
+                    MDR = "- - - - - - ";
                     break;
                 case "001101":
                     //BG
                     labelName = LabelLocationMap.FirstOrDefault(x => x.Value == (int)(convertToBase10(mem)));
                     dispLab = labelName.Key;
-                    Console.WriteLine("line num: " + labelName.Value);
                     if (ACC > 0)
                     {
-                        index = labelName.Value - 1;
+                        PC = labelName.Value-1;
                     }
                     nextInst = "bg " + dispLab;
+                    MAR = "- - - - - - ";
+                    MDR = "- - - - - - ";
                     break;
                 case "001110":
                     //NOP
-                    ACC = (Int16) (ACC + 0);
+                    ACC = (Int16)(ACC + 0);
                     nextInst = "nop";
+                    MAR = "- - - - - - ";
+                    MDR = "- - - - - - ";
                     break;
                 case "001111":
                     //HLT
                     nextInst = "hlt";
+                    MAR = "- - - - - - ";
+                    MDR = "- - - - - - ";
                     finished = true;
-                    index = 0;
+                    PC = 0;
                     break;
             }
-            if (index + 1 == binary.Count)
+            if (PC + 1 == binary.Count)
             {
                 finished = true;
-                index = 0;
+                PC = 0;
             }
             if (finished)
             {
                 Console.WriteLine("finished");
             }
             #endregion
-            index++;
+            PC++;
             instr = "";
             mem = "";
         }
@@ -378,18 +471,18 @@ namespace GeminiCore
                 }
                 exp--;
             }
-                return num;
+            return num;
         }
         #endregion
 
         //if this function doesn't work, it's because changed parameter from int to double
         #region convertToBinary
-        public string convertToBinary(double x)
+        public string convertToBinary(int x)
         {
             ArrayList bin = new ArrayList();
             string result = "";
-            double temp = x;
-            double remainder = 0;
+            int temp = x;
+            int remainder = 0;
             int length = 0;
 
             while (temp > 0)
@@ -418,6 +511,7 @@ namespace GeminiCore
         #endregion
 
         #region negateBinary
+        /*
         public string negateBinary(string x)
         {
             string result = "";
@@ -438,6 +532,7 @@ namespace GeminiCore
             result = convertToBinary(curr);
             return result;
         }
+         * */
         #endregion
 
 
