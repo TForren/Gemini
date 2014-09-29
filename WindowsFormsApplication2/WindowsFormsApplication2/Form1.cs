@@ -68,8 +68,7 @@ namespace WindowsFormsApplication2
                         myCPU.setLabelLocationMap(ipe.getLabelLocationMap());
                         foreach( KeyValuePair<string, int> kvp in ipe.getLabelLocationMap() )
                         {
-                            Console.WriteLine("Key = {0}, Value = {1}", 
-                                kvp.Key, kvp.Value);
+                            //Console.WriteLine("Key = {0}, Value = {1}", kvp.Key, kvp.Value);
                         }
  //                       for (int i = 0; i < ipe.getLabelLocationMap().Count; i++)
    //                     {
@@ -83,7 +82,7 @@ namespace WindowsFormsApplication2
                     }
                     catch (Exception err)
                     {
-                       // System.Windows.Forms.MessageBox.Show(err.Message);
+                       System.Windows.Forms.MessageBox.Show(err.Message);
                     }
                 }
             }

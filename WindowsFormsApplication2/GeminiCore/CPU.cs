@@ -383,7 +383,6 @@ namespace GeminiCore
                     labelName = LabelLocationMap.FirstOrDefault(x => x.Value == ((int)(convertToBase10(mem))));
                     dispLab = labelName.Key;
                     int newMem = (int)(convertToBase10(mem));
-                    Console.WriteLine("newmem " + newMem);
                     //int lineValue = 0;
                     //foreach (KeyValuePair<string, int> pair in LabelLocationMap)
                     //{
