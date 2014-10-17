@@ -19,10 +19,13 @@ namespace WindowsFormsApplication2
     public partial class Form1 : Form
     {
         public CPU myCPU;
+        public Memory mainMemory;
 
         public Form1()
         {
             myCPU = new CPU();
+
+            mainMemory = new Memory();
 
             InitializeComponent();
             #region GUI pretty stuff. Making transparencies
@@ -66,6 +69,9 @@ namespace WindowsFormsApplication2
                         myCPU.setBinary(binary);
                         myCPU.setBinary16(finBinary);
                         myCPU.setLabelLocationMap(ipe.getLabelLocationMap());
+                        mainMemory.setLabelLocationMap(ipe.getLabelLocationMap());
+                        myCPU.getMainMemory().InitializeCache();
+
                         foreach( KeyValuePair<string, int> kvp in ipe.getLabelLocationMap() )
                         {
                             //Console.WriteLine("Key = {0}, Value = {1}", kvp.Key, kvp.Value);
@@ -87,6 +93,12 @@ namespace WindowsFormsApplication2
                 }
             }
         }
+
+        public Memory getMainMemory()
+        {
+            return mainMemory;
+        }
+
         public double convertToBase10(string x)
         {
             double num = 0;

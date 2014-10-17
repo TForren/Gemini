@@ -33,6 +33,8 @@ namespace GeminiCore
         private List<string> binary;
         private List<Int16> binary16;
         private Dictionary<string, int> LabelLocationMap;
+        //Dictionary<string, Int16> memoryBook = new Dictionary<string, Int16>();
+        private Memory mainMemory = new Memory();
         private string instr = "";
         private char imm = ' ';
         private char sign = ' ';
@@ -45,7 +47,10 @@ namespace GeminiCore
             ACC = 0;
         }
 
-        Dictionary<string, Int16> memoryBook = new Dictionary<string, Int16>();
+        public Memory getMainMemory()
+        {
+            return mainMemory;
+        }
 
         public void setLabelLocationMap(Dictionary<string, int> list)
         {
@@ -120,7 +125,7 @@ namespace GeminiCore
                 MAR = "- - - - - - ";
                 MDR = "- - - - - - ";
             }
-
+            CC = "- - - - - - - ";
             Boolean immediate = false;
             Boolean signed = false;
             if (imm == '1')
@@ -162,12 +167,16 @@ namespace GeminiCore
                     }
                     else
                     {
-                        ACC = memoryBook[mem];
+                        //ACC = mainMemory.getMemoryBook()[convertToBase10(mem)];
+                        ACC = mainMemory.getValue(convertToBase10(mem));
                         MAR = mem;
-                        MDR = convertToBinary(memoryBook[mem]);
+                        MDR = convertToBinary(ACC);
                     }
                     dispMem = Convert.ToInt32(convertToBase10(mem));
                     nextInst = "lda " + dispImm + dispMem;
+
+                    //mainMemory.printCache(mainMemory.getCache());
+                    //mainMemory.printMemory(mainMemory.getMemoryBook());
                     break;
                 case "000001":
                     //STA
@@ -177,9 +186,10 @@ namespace GeminiCore
                     }
                     else
                     {
-                        memoryBook[mem] = ACC;
+                        //mainMemory.addMem(mem, ACC);
+                        mainMemory.setValue(convertToBase10(mem), ACC);
                         MAR = mem;
-                        MDR = convertToBinary(memoryBook[mem]);
+                        MDR = convertToBinary(ACC);
                     }
 
                     dispMem = Convert.ToInt32(convertToBase10(mem));
@@ -199,9 +209,11 @@ namespace GeminiCore
                     }
                     else
                     {
-                        ACC = (Int16)(ACC + memoryBook[mem]);
+                        //ACC = (Int16)(ACC + mainMemory.getMemoryBook()[convertToBase10(mem)]);
+                        ACC = (Int16)(ACC + mainMemory.getValue(convertToBase10(mem)));
                         MAR = mem;
-                        MDR = convertToBinary(memoryBook[mem]);
+                        //MDR = convertToBinary(mainMemory.getMemoryBook()[convertToBase10(mem)]);
+                        MDR = convertToBinary(mainMemory.getValue(convertToBase10(mem)));
                     }
                     dispMem = Convert.ToInt32(convertToBase10(mem));
                     nextInst = "add " + dispImm + dispMem;
@@ -220,9 +232,11 @@ namespace GeminiCore
                     }
                     else
                     {
-                        ACC = (Int16)(ACC - memoryBook[mem]);
+                        //ACC = (Int16)(ACC - mainMemory.getMemoryBook()[convertToBase10(mem)]);
+                        ACC = (Int16)(ACC - mainMemory.getValue(convertToBase10(mem)));
                         MAR = mem;
-                        MDR = convertToBinary(memoryBook[mem]);
+                        //MDR = convertToBinary(mainMemory.getMemoryBook()[convertToBase10(mem)]);
+                        MDR = convertToBinary(mainMemory.getValue(convertToBase10(mem)));
                     }
                     dispMem = Convert.ToInt32(convertToBase10(mem));
                     nextInst = "sub " + dispImm + dispMem;
@@ -241,9 +255,12 @@ namespace GeminiCore
                     }
                     else
                     {
-                        ACC = (Int16)(ACC * memoryBook[mem]);
+                        //ACC = (Int16)(ACC * mainMemory.getMemoryBook()[convertToBase10(mem)]);
+                        ACC = (Int16)(ACC * mainMemory.getValue(convertToBase10(mem)));
                         MAR = mem;
-                        MDR = convertToBinary(memoryBook[mem]);
+                        //MDR = convertToBinary(mainMemory.getMemoryBook()[convertToBase10(mem)]);
+                        MDR = convertToBinary(mainMemory.getValue(convertToBase10(mem)));
+
                     }
                     dispMem = Convert.ToInt32(convertToBase10(mem));
                     nextInst = "mul " + dispImm + dispMem;
@@ -266,9 +283,11 @@ namespace GeminiCore
                     }
                     else
                     {
-                        ACC = (Int16)(ACC / memoryBook[mem]);
+                        //ACC = (Int16)(ACC / mainMemory.getMemoryBook()[convertToBase10(mem)]);
+                        ACC = (Int16)(ACC / mainMemory.getValue(convertToBase10(mem)));
                         MAR = mem;
-                        MDR = convertToBinary(memoryBook[mem]);
+                        //MDR = convertToBinary(mainMemory.getMemoryBook()[convertToBase10(mem)]);
+                        MDR = convertToBinary(mainMemory.getValue(convertToBase10(mem)));
                     }
                     dispMem = Convert.ToInt32(convertToBase10(mem));
                     nextInst = "div " + dispImm + dispMem;
@@ -287,9 +306,11 @@ namespace GeminiCore
                     }
                     else
                     {
-                        ACC = (Int16)(ACC & memoryBook[mem]);
+                        //ACC = (Int16)(ACC & mainMemory.getMemoryBook()[convertToBase10(mem)]);
+                        ACC = (Int16)(ACC & mainMemory.getValue(convertToBase10(mem)));
                         MAR = mem;
-                        MDR = convertToBinary(memoryBook[mem]);
+                        //MDR = convertToBinary(mainMemory.getMemoryBook()[convertToBase10(mem)]);
+                        MDR = convertToBinary(mainMemory.getValue(convertToBase10(mem)));
                     }
                     dispMem = Convert.ToInt32(convertToBase10(mem));
                     nextInst = "and " + dispImm + dispMem;
@@ -308,9 +329,11 @@ namespace GeminiCore
                     }
                     else
                     {
-                        ACC = (Int16)(ACC | memoryBook[mem]);
+                        //ACC = (Int16)(ACC | mainMemory.getMemoryBook()[convertToBase10(mem)]);
+                        ACC = (Int16)(ACC | mainMemory.getValue(convertToBase10(mem)));
                         MAR = mem;
-                        MDR = convertToBinary(memoryBook[mem]);
+                        //MDR = convertToBinary(mainMemory.getMemoryBook()[convertToBase10(mem)]);
+                        MDR = convertToBinary(mainMemory.getValue(convertToBase10(mem)));
                     }
                     dispMem = Convert.ToInt32(convertToBase10(mem));
                     nextInst = "or " + dispImm + dispMem;
@@ -371,8 +394,8 @@ namespace GeminiCore
                     labelName = LabelLocationMap.FirstOrDefault(x => x.Value == (int)(convertToBase10(mem)));
                     dispLab = labelName.Key;
                     PC = labelName.Value-1;
-                    Console.WriteLine("Label Name in BA: " + labelName);
-                    Console.WriteLine("dispLab: " + dispLab);
+                    //Console.WriteLine("Label Name in BA: " + labelName);
+                    //Console.WriteLine("dispLab: " + dispLab);
 
                     nextInst = "ba " + dispLab;
                     MAR = "- - - - - - ";
@@ -396,8 +419,8 @@ namespace GeminiCore
                     {
                         PC = newMem-1;
                     }
-                    Console.WriteLine("Label Name in BE: " + labelName);
-                    Console.WriteLine("dispLab: " + dispLab);
+                    //Console.WriteLine("Label Name in BE: " + labelName);
+                    //Console.WriteLine("dispLab: " + dispLab);
                     nextInst = "be " + dispLab;
                     MAR = "- - - - - - ";
                     MDR = "- - - - - - ";
@@ -449,7 +472,19 @@ namespace GeminiCore
             }
             if (finished)
             {
-                Console.WriteLine("finished");
+                //Console.WriteLine("finished");
+            }
+            if (ACC > 0)
+            {
+                CC = "1";
+            }
+            else if (ACC < 0)
+            {
+                CC = "-1";
+            }
+            else
+            {
+                CC = "0";
             }
             #endregion
             PC++;
@@ -458,7 +493,7 @@ namespace GeminiCore
         }
 
         #region convertToBase10
-        public double convertToBase10(string x)
+        public int convertToBase10(string x)
         {
             double num = 0;
             int exp = x.Length - 1;
@@ -470,7 +505,7 @@ namespace GeminiCore
                 }
                 exp--;
             }
-            return num;
+            return (int)(num);
         }
         #endregion
 

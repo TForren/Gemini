@@ -57,6 +57,7 @@ namespace GeminiCore
                     {
                         if (labelStmtMatch.Groups["comments"].Value[0] != '!')
                         {
+                            throw new Exception("InvalidCommentException at line " + lineExceptionCounter);
                             Console.WriteLine("InvalidCommentException at line " + lineExceptionCounter);
                             broken = true;
                         }
@@ -93,10 +94,10 @@ namespace GeminiCore
         public List<string> ParseFile()
         {
             ParseForLabels();
-            foreach (KeyValuePair<string, int> kvp in labelLocationMap)
-            {
-                Console.WriteLine("Key = {0}, Value = {1}", kvp.Key, kvp.Value);
-            }
+           // foreach (KeyValuePair<string, int> kvp in labelLocationMap)
+            //{
+              //  Console.WriteLine("Key = {0}, Value = {1}", kvp.Key, kvp.Value);
+            //}
             int lineCounter = 1;
             int lineExceptionCounter = 1;
             var lines = File.ReadAllLines(this.FileToParse).ToList<string>();
@@ -207,8 +208,8 @@ namespace GeminiCore
                             Int16 intVal = Convert.ToInt16(value);
                             if (intVal > 255)
                             {
-                                throw new Exception("OverflowException at line " + lineExceptionCounter);
-                                Console.WriteLine("OverflowException at line " + lineExceptionCounter);
+                                throw new Exception("Segmentation Fault at line " + lineExceptionCounter);
+                                Console.WriteLine("Segmentation Fault at line " + lineExceptionCounter);
                                 broken = true;
                             }
                             else if (intVal < 0)
@@ -247,8 +248,8 @@ namespace GeminiCore
                             {
                                 if (Convert.ToInt16(address) > 255)
                                 {
-                                    throw new Exception("OverflowException at line " + lineExceptionCounter);
-                                    Console.WriteLine("OverflowException at line " + lineExceptionCounter);
+                                    throw new Exception("Segmentation Fault at line " + lineExceptionCounter);
+                                    Console.WriteLine("Segmentation Fault at line " + lineExceptionCounter);
                                     broken = true;
                                 }
                                 else
@@ -263,7 +264,7 @@ namespace GeminiCore
                                 if (labelLocationMap.ContainsKey(address))
                                 {
                                     int memVal = labelLocationMap[address];
-                                    Console.WriteLine("memVal: " + memVal);
+                                    //Console.WriteLine("memVal: " + memVal);
                                     mem = convertToBinary(memVal);
                                 }
                                 //op is the label name (string), need to keep track of each label name when first find it

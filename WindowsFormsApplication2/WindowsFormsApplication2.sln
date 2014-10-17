@@ -1,7 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindowsFormsApplication2", "WindowsFormsApplication2\WindowsFormsApplication2.csproj", "{05122D4A-DD7B-4260-9289-B3FBAC4BE718}"
+# Visual Studio 2013
+VisualStudioVersion = 12.0.30723.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeminiForm", "WindowsFormsApplication2\GeminiForm.csproj", "{05122D4A-DD7B-4260-9289-B3FBAC4BE718}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeminiCore", "GeminiCore\GeminiCore.csproj", "{AEE8708A-B956-48C4-98C5-FCD8EC4621F6}"
 EndProject
