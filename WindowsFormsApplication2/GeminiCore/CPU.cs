@@ -175,8 +175,8 @@ namespace GeminiCore
                     dispMem = Convert.ToInt32(convertToBase10(mem));
                     nextInst = "lda " + dispImm + dispMem;
 
-                    mainMemory.printCache(mainMemory.getCache());
-                    mainMemory.printMemory(mainMemory.getMemoryBook());
+                    //mainMemory.printCache(mainMemory.getCache());
+                    //mainMemory.printMemory(mainMemory.getMemoryBook());
                     break;
                 case "000001":
                     //STA
@@ -195,8 +195,8 @@ namespace GeminiCore
                     dispMem = Convert.ToInt32(convertToBase10(mem));
                     nextInst = "sta " + dispImm + dispMem;
 
-                    mainMemory.printCache(mainMemory.getCache());
-                    mainMemory.printMemory(mainMemory.getMemoryBook());
+                    //mainMemory.printCache(mainMemory.getCache());
+                    //mainMemory.printMemory(mainMemory.getMemoryBook());
                     break;
                 case "000010":
                     //ADD
@@ -415,15 +415,15 @@ namespace GeminiCore
                         //if (newMem == pair.Value)
                         //{
                             //dispLab = pair.Key;
-                          //  lineValue = pair.Value;
-                       // }
-                  //  }
+                            //lineValue = pair.Value;
+                        //}
+                    //}
                     if (ACC == 0)
                     {
                         PC = newMem-1;
                     }
-                    //Console.WriteLine("Label Name in BE: " + labelName);
-                    //Console.WriteLine("dispLab: " + dispLab);
+                    Console.WriteLine("Label Name in BE: " + labelName);
+                    Console.WriteLine("dispLab: " + dispLab);
                     nextInst = "be " + dispLab;
                     MAR = "- - - - - - ";
                     MDR = "- - - - - - ";

@@ -94,10 +94,10 @@ namespace GeminiCore
         public List<string> ParseFile()
         {
             ParseForLabels();
-           // foreach (KeyValuePair<string, int> kvp in labelLocationMap)
-            //{
-              //  Console.WriteLine("Key = {0}, Value = {1}", kvp.Key, kvp.Value);
-            //}
+            foreach (KeyValuePair<string, int> kvp in labelLocationMap)
+            {
+                Console.WriteLine("Key = {0}, Value = {1}", kvp.Key, kvp.Value);
+            }
             int lineCounter = 1;
             int lineExceptionCounter = 1;
             var lines = File.ReadAllLines(this.FileToParse).ToList<string>();
@@ -105,15 +105,12 @@ namespace GeminiCore
             foreach (var line in lines)
             {
                 #region Regex stuff. Puts capture groups in variables
-                Regex labelStmtFormat = new Regex(@"^(?<label>.*)\s*:\s*(?<comments>\S*)");
+                Regex labelStmtFormat = new Regex(@"^\s*(?<label>.*)\s*:\s*(?<comments>\S*)");
                 Regex opcodeStmtFormat = new Regex(@"^\s*(?<opcode>[a-z]{2,3})\s(?<operand>\S*)\s*(?<comments>\S*)");
                 Regex onlyOpStmtFormat = new Regex(@"^\s*(?<opcode>\b(nota|nop|hlt))\s*(?<comments>\S*)");
                 var labelStmtMatch = labelStmtFormat.Match(line);
                 var opcodeStmtMatch = opcodeStmtFormat.Match(line);
                 var onlyOpStmtMatch = onlyOpStmtFormat.Match(line);
-                
-               
-                
                 #endregion
 
                 if (labelStmtMatch.Success)

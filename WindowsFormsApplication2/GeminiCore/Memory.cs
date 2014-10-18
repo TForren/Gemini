@@ -41,24 +41,8 @@ namespace GeminiCore
             for (int i = 0; i < cacheSize; i++)
             {
                 cache[i].empty = true;
-
-
             }
-
-
         }
-        
-        /*
-        public Frame[] InitializeCache(){
-
-            for(int i = 0; i < cacheSize; i++){
-                cache[i].empty = true;
-                cache[i].dirty = false;
-            }
-
-            return cache;
-        }
-        */
 
         //read
         public Int16 getValue(int register)
@@ -93,31 +77,28 @@ namespace GeminiCore
         public void writeMiss(int register, int frameNum, Int16 value)
         {
             memoryBook[register] = value;
-            cache[frameNum].dirty = true;
-            cache[frameNum].empty = false;
         }
 
-        public void writeHit(int register, int FrameNum, Int16 value) {
-            Frame frame = cache[FrameNum];
-            if (frame.tag == register)
+        public void writeHit(int register, int frameNum, Int16 value) {
+            //Frame frame = cache[FrameNum];
+            if (cache[frameNum].tag == register)
             {
-                frame.value = value;
-                frame.dirty = true;
+                cache[frameNum].value = value;
+                cache[frameNum].dirty = true;
             }
-            else if ((frame.tag != register) && !frame.dirty)
+            else if ((cache[frameNum].tag != register) && !cache[frameNum].dirty)
             {
-                frame.value = value;
-                frame.tag = register;
-                frame.dirty = true;
+                cache[frameNum].value = value;
+                cache[frameNum].tag = register;
+                cache[frameNum].dirty = true;
             }
-            else if ((frame.tag != register) && frame.dirty)
+            else if ((cache[frameNum].tag != register) && cache[frameNum].dirty)
             {
-                memoryBook[frame.tag] = frame.value;
-                frame.value = value;
-                frame.tag = register;
-                frame.dirty = true;
+                memoryBook[cache[frameNum].tag] = cache[frameNum].value;
+                cache[frameNum].value = value;
+                cache[frameNum].tag = register;
+                cache[frameNum].dirty = true;
             }
-
         }
 
         public Int16 readHit(int frameNum)
@@ -128,29 +109,32 @@ namespace GeminiCore
         public Int16 readMiss(int register, int frameNum) {
             Int16 value = 0;
             //nothing in cache
-            Frame frame = cache[frameNum];
-            if (frame.empty == true)
+            //Frame frame = cache[frameNum];
+            if (cache[frameNum].empty == true)
             {
-                frame.value = memoryBook[register];
-                frame.tag = register;
-                frame.empty = false;
+                //Console.WriteLine("Register: " + register);
+                //Console.WriteLine("Value from memB0OOK: " + memoryBook[register]);
+                cache[frameNum].value = memoryBook[register];
+                //Console.WriteLine("Frame value: " + cache[frameNum].value);
+                cache[frameNum].tag = register;
+                cache[frameNum].empty = false;
             }
             //clean bit
-            else if (!frame.dirty)
+            else if (!cache[frameNum].dirty)
             {
-                frame.value = memoryBook[register];
-                frame.tag = register;
+                cache[frameNum].value = memoryBook[register];
+                cache[frameNum].tag = register;
             }
             //dirty bit
-            else if (frame.dirty)
+            else if (cache[frameNum].dirty)
             {
-                memoryBook[frame.tag] = frame.value;
-                frame.value = memoryBook[register];
-                frame.tag = register;
-                frame.dirty = false;
+                memoryBook[cache[frameNum].tag] = cache[frameNum].value;
+                cache[frameNum].value = memoryBook[register];
+                cache[frameNum].tag = register;
+                cache[frameNum].dirty = false;
 
             }
-            value = frame.value;
+            value = cache[frameNum].value;
 
             return value;
         }
@@ -161,7 +145,7 @@ namespace GeminiCore
             Console.WriteLine("Frame Tag Value Dirty Empty");
             for (int i = 0; i < cacheSize; i++)
             {
-                Console.WriteLine(i + " " + cache[i].tag + " " + cache[i].value + " " + cache[i].dirty + " " + cache[i].empty);
+                Console.WriteLine(i + "      " + cache[i].tag + "    " + cache[i].value + "   " + cache[i].dirty + " " + cache[i].empty);
             }
         }
 
