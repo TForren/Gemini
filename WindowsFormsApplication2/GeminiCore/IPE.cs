@@ -42,7 +42,7 @@ namespace GeminiCore
             var lines = File.ReadAllLines(this.FileToParse).ToList<string>();
             foreach (var line in lines)
             {
-                Regex labelStmtFormat = new Regex(@"^(?<label>.*)\s*:\s*(?<comments>\S*)");
+                Regex labelStmtFormat = new Regex(@"^\s*(?<label>.*)\s*:\s*(?<comments>\S*)");
                // Regex stuffStmtFormat = new Regex(@"^\s*(?<stuff>[^!]\S*)");
                 //var stuffStmtMatch = stuffStmtFormat.Match(line);
                 var labelStmtMatch = labelStmtFormat.Match(line);
@@ -94,10 +94,10 @@ namespace GeminiCore
         public List<string> ParseFile()
         {
             ParseForLabels();
-            foreach (KeyValuePair<string, int> kvp in labelLocationMap)
-            {
-                Console.WriteLine("Key = {0}, Value = {1}", kvp.Key, kvp.Value);
-            }
+            //foreach (KeyValuePair<string, int> kvp in labelLocationMap)
+           // {
+               // Console.WriteLine("Key = {0}, Value = {1}", kvp.Key, kvp.Value);
+          //  }
             int lineCounter = 1;
             int lineExceptionCounter = 1;
             var lines = File.ReadAllLines(this.FileToParse).ToList<string>();

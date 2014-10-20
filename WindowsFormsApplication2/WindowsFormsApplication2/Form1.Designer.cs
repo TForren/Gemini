@@ -62,9 +62,16 @@
             this.label12 = new System.Windows.Forms.Label();
             this.LoadLabel = new System.Windows.Forms.Label();
             this.runAllButton = new System.Windows.Forms.Button();
+            this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
+            this.label13 = new System.Windows.Forms.Label();
+            this.label14 = new System.Windows.Forms.Label();
+            this.HitCountLabel = new System.Windows.Forms.Label();
+            this.MissCountLabel = new System.Windows.Forms.Label();
+            this.MissOrHitLabel = new System.Windows.Forms.Label();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.BackgroundPicBox)).BeginInit();
             this.nextInstructionTable.SuspendLayout();
+            this.tableLayoutPanel2.SuspendLayout();
             this.SuspendLayout();
             // 
             // accLabel
@@ -477,7 +484,7 @@
             this.nextInstructionTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.nextInstructionTable.Controls.Add(this.nextInstructionDisplayLabel, 0, 1);
             this.nextInstructionTable.Controls.Add(this.label12, 0, 0);
-            this.nextInstructionTable.Location = new System.Drawing.Point(6, 59);
+            this.nextInstructionTable.Location = new System.Drawing.Point(4, 60);
             this.nextInstructionTable.Name = "nextInstructionTable";
             this.nextInstructionTable.RowCount = 2;
             this.nextInstructionTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
@@ -536,11 +543,103 @@
             this.runAllButton.UseVisualStyleBackColor = true;
             this.runAllButton.Click += new System.EventHandler(this.runAllButton_Click);
             // 
+            // tableLayoutPanel2
+            // 
+            this.tableLayoutPanel2.BackColor = System.Drawing.Color.Transparent;
+            this.tableLayoutPanel2.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("tableLayoutPanel2.BackgroundImage")));
+            this.tableLayoutPanel2.ColumnCount = 2;
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 51F));
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel2.Controls.Add(this.MissCountLabel, 1, 1);
+            this.tableLayoutPanel2.Controls.Add(this.HitCountLabel, 1, 0);
+            this.tableLayoutPanel2.Controls.Add(this.label13, 0, 1);
+            this.tableLayoutPanel2.Controls.Add(this.label14, 0, 0);
+            this.tableLayoutPanel2.Location = new System.Drawing.Point(4, 175);
+            this.tableLayoutPanel2.Name = "tableLayoutPanel2";
+            this.tableLayoutPanel2.RowCount = 2;
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(171, 66);
+            this.tableLayoutPanel2.TabIndex = 11;
+            // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.BackColor = System.Drawing.Color.Transparent;
+            this.label13.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F);
+            this.label13.ForeColor = System.Drawing.Color.Moccasin;
+            this.label13.Location = new System.Drawing.Point(3, 33);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(108, 24);
+            this.label13.TabIndex = 25;
+            this.label13.Text = "Miss Count:";
+            this.label13.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            // 
+            // label14
+            // 
+            this.label14.AutoSize = true;
+            this.label14.BackColor = System.Drawing.Color.Transparent;
+            this.label14.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label14.ForeColor = System.Drawing.Color.Moccasin;
+            this.label14.Location = new System.Drawing.Point(3, 0);
+            this.label14.Name = "label14";
+            this.label14.Padding = new System.Windows.Forms.Padding(1, 0, 0, 0);
+            this.label14.Size = new System.Drawing.Size(93, 24);
+            this.label14.TabIndex = 24;
+            this.label14.Text = "Hit Count:";
+            this.label14.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.label14.Click += new System.EventHandler(this.label14_Click);
+            // 
+            // HitCountLabel
+            // 
+            this.HitCountLabel.AutoSize = true;
+            this.HitCountLabel.BackColor = System.Drawing.Color.Transparent;
+            this.HitCountLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.25F);
+            this.HitCountLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
+            this.HitCountLabel.Location = new System.Drawing.Point(123, 0);
+            this.HitCountLabel.Name = "HitCountLabel";
+            this.HitCountLabel.Size = new System.Drawing.Size(24, 25);
+            this.HitCountLabel.TabIndex = 17;
+            this.HitCountLabel.Text = "0";
+            this.HitCountLabel.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            // 
+            // MissCountLabel
+            // 
+            this.MissCountLabel.AutoSize = true;
+            this.MissCountLabel.BackColor = System.Drawing.Color.Transparent;
+            this.MissCountLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.25F);
+            this.MissCountLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
+            this.MissCountLabel.Location = new System.Drawing.Point(123, 33);
+            this.MissCountLabel.Name = "MissCountLabel";
+            this.MissCountLabel.Size = new System.Drawing.Size(24, 25);
+            this.MissCountLabel.TabIndex = 26;
+            this.MissCountLabel.Text = "0";
+            this.MissCountLabel.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            // 
+            // MissOrHitLabel
+            // 
+            this.MissOrHitLabel.AutoSize = true;
+            this.MissOrHitLabel.BackColor = System.Drawing.Color.Transparent;
+            this.MissOrHitLabel.Font = new System.Drawing.Font("Verdana", 15.75F, System.Drawing.FontStyle.Bold);
+            this.MissOrHitLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.MissOrHitLabel.Location = new System.Drawing.Point(67, 135);
+            this.MissOrHitLabel.Name = "MissOrHitLabel";
+            this.MissOrHitLabel.Padding = new System.Windows.Forms.Padding(1, 0, 0, 0);
+            this.MissOrHitLabel.Size = new System.Drawing.Size(64, 25);
+            this.MissOrHitLabel.TabIndex = 25;
+            this.MissOrHitLabel.Text = "  --- ";
+            this.MissOrHitLabel.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.MissOrHitLabel.Click += new System.EventHandler(this.label17_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(544, 296);
+            this.Controls.Add(this.MissOrHitLabel);
+            this.Controls.Add(this.tableLayoutPanel2);
             this.Controls.Add(this.runAllButton);
             this.Controls.Add(this.LoadLabel);
             this.Controls.Add(this.nextInstructionTable);
@@ -558,6 +657,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.BackgroundPicBox)).EndInit();
             this.nextInstructionTable.ResumeLayout(false);
             this.nextInstructionTable.PerformLayout();
+            this.tableLayoutPanel2.ResumeLayout(false);
+            this.tableLayoutPanel2.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -598,6 +699,12 @@
         private System.Windows.Forms.Label nextInstructionDisplayLabel;
         private System.Windows.Forms.Label LoadLabel;
         private System.Windows.Forms.Button runAllButton;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
+        private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.Label label14;
+        private System.Windows.Forms.Label MissCountLabel;
+        private System.Windows.Forms.Label HitCountLabel;
+        private System.Windows.Forms.Label MissOrHitLabel;
     }
 }
 

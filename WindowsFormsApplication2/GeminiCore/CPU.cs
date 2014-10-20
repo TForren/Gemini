@@ -89,6 +89,9 @@ namespace GeminiCore
             IR = "- - - - - - - - -";
             CC = "- - - - - - - - -";
             nextInst = "- - - - - - - - -";
+            mainMemory.HitorMiss = "  --- ";
+            mainMemory.HITCOUNT = 0;
+            mainMemory.MISSCOUNT = 0;
             finished = false;
             broken = false;
         }
@@ -151,6 +154,7 @@ namespace GeminiCore
                     nextInst = labelName.Key + ":";
                     MAR = "- - - - - - -";
                     MDR = "- - - - - - -";
+                    mainMemory.HitorMiss = "  --- ";
                     break;
                 case "000000":
                     //LDA
@@ -163,6 +167,7 @@ namespace GeminiCore
                     {
                         ACC = Convert.ToInt16(convertToBase10(mem));
                         MAR = "- - - - - - -";
+                        mainMemory.HitorMiss = "  --- ";
                         MDR = mem;
                     }
                     else
@@ -175,8 +180,9 @@ namespace GeminiCore
                     dispMem = Convert.ToInt32(convertToBase10(mem));
                     nextInst = "lda " + dispImm + dispMem;
 
-                    //mainMemory.printCache(mainMemory.getCache());
+                    mainMemory.printCache(mainMemory.getCache());
                     //mainMemory.printMemory(mainMemory.getMemoryBook());
+                    mainMemory.printCounts();
                     break;
                 case "000001":
                     //STA
@@ -195,8 +201,9 @@ namespace GeminiCore
                     dispMem = Convert.ToInt32(convertToBase10(mem));
                     nextInst = "sta " + dispImm + dispMem;
 
-                    //mainMemory.printCache(mainMemory.getCache());
+                    mainMemory.printCache(mainMemory.getCache());
                     //mainMemory.printMemory(mainMemory.getMemoryBook());
+                    mainMemory.printCounts();
                     break;
                 case "000010":
                     //ADD
@@ -206,7 +213,7 @@ namespace GeminiCore
                     }
                     else if (immediate && !signed)
                     {
-                        ACC += Convert.ToInt16(mem);
+                        ACC += (Int16)(convertToBase10(mem));
                         MAR = "- - - - - - ";
                         MDR = mem;
                     }
@@ -220,6 +227,7 @@ namespace GeminiCore
                     }
                     dispMem = Convert.ToInt32(convertToBase10(mem));
                     nextInst = "add " + dispImm + dispMem;
+                    mainMemory.HitorMiss = "  --- ";
                     break;
                 case "000011":
                     //SUB
@@ -229,7 +237,9 @@ namespace GeminiCore
                     }
                     else if (immediate && !signed)
                     {
-                        ACC = (Int16)(ACC - Convert.ToInt16(mem));
+                        //Console.WriteLine("subtracting " + convertToBase10(mem) + " from " + ACC);
+                        ACC = (Int16)(ACC - convertToBase10(mem));
+                        //Console.WriteLine("ACC = " + ACC);
                         MAR = "- - - - - - - ";
                         MDR = mem;
                     }
@@ -243,6 +253,7 @@ namespace GeminiCore
                     }
                     dispMem = Convert.ToInt32(convertToBase10(mem));
                     nextInst = "sub " + dispImm + dispMem;
+                    mainMemory.HitorMiss = "  --- ";
                     break;
                 case "000100":
                     //mul
@@ -252,7 +263,7 @@ namespace GeminiCore
                     }
                     else if (immediate && !signed)
                     {
-                        ACC = (Int16)(ACC * Convert.ToInt16(mem));
+                        ACC = (Int16)(ACC * convertToBase10(mem));
                         MAR = "- - - - - - - ";
                         MDR = mem;
                     }
@@ -267,6 +278,7 @@ namespace GeminiCore
                     }
                     dispMem = Convert.ToInt32(convertToBase10(mem));
                     nextInst = "mul " + dispImm + dispMem;
+                    mainMemory.HitorMiss = "  --- ";
                     break;
                 case "000101":
                     //div
@@ -280,7 +292,7 @@ namespace GeminiCore
                     }
                     else if (immediate && !signed)
                     {
-                        ACC = (Int16)(ACC / Convert.ToInt16(mem));
+                        ACC = (Int16)(ACC / convertToBase10(mem));
                         MAR = "- - - - - - - ";
                         MDR = mem;
                     }
@@ -294,6 +306,7 @@ namespace GeminiCore
                     }
                     dispMem = Convert.ToInt32(convertToBase10(mem));
                     nextInst = "div " + dispImm + dispMem;
+                    mainMemory.HitorMiss = "  --- ";
                     break;
                 case "000110":
                     //and
@@ -303,7 +316,7 @@ namespace GeminiCore
                     }
                     else if (immediate && !signed)
                     {
-                        ACC = (Int16)(ACC & Convert.ToInt16(mem));
+                        ACC = (Int16)(ACC & convertToBase10(mem));
                         MAR = "- - - - - - -";
                         MDR = mem;
                     }
@@ -317,6 +330,7 @@ namespace GeminiCore
                     }
                     dispMem = Convert.ToInt32(convertToBase10(mem));
                     nextInst = "and " + dispImm + dispMem;
+                    mainMemory.HitorMiss = "  --- ";
                     break;
                 case "000111":
                     //or
@@ -326,7 +340,7 @@ namespace GeminiCore
                     }
                     else if (immediate && !signed)
                     {
-                        ACC = (Int16)(ACC | Convert.ToInt16(mem));
+                        ACC = (Int16)(ACC | convertToBase10(mem));
                         MAR = "- - - - - - -";
                         MDR = mem;
                     }
@@ -340,23 +354,26 @@ namespace GeminiCore
                     }
                     dispMem = Convert.ToInt32(convertToBase10(mem));
                     nextInst = "or " + dispImm + dispMem;
+                    mainMemory.HitorMiss = "  --- ";
                     break;
                 case "001000":
                     //SHL, if value is negative, should we shift right?
                     if (immediate)
                     {
-                        string binAcc = Convert.ToString(ACC);
-                        Int16 value = Convert.ToInt16(mem);
+                        string binAcc = convertToBin(ACC);
+                        Int16 value = (Int16)(convertToBase10(mem));
+                        Console.WriteLine("ACC " + binAcc + ", value " + value);
                         string afterSHL = "";
-                        for (int k = (int)value; k < 8; k++)
+                        for (int k = (int)value; k < binAcc.Length; k++)
                         {
+                            Console.WriteLine("k " + k);
                             afterSHL += binAcc[k];
                         }
                         for (int j = 0; j < (int)value; j++)
                         {
                             afterSHL += '0';
                         }
-                        ACC = Convert.ToInt16(convertToBase10(afterSHL));
+                        ACC = (Int16)(convertToBase10(afterSHL));
                         MAR = "- - - - - - -";
                         MDR = mem;
                         afterSHL = "";
@@ -367,9 +384,12 @@ namespace GeminiCore
                     }
                     dispMem = Convert.ToInt32(convertToBase10(mem));
                     nextInst = "shl " + dispImm + dispMem;
+                    mainMemory.HitorMiss = "  --- ";
                     break;
                 case "001001":
-                    //NOTA, if acc is negative, should it become postive?
+                    //NOTA
+
+                    /*
                     string binACC = convertToBinary(ACC);
                     string resultACC = "";
                     double final = 0;
@@ -385,11 +405,15 @@ namespace GeminiCore
                         }
                     }
                     final = convertToBase10(resultACC);
-                    ACC = Convert.ToInt16(final);
+                     */
+
+                    ACC = (Int16)(~ACC);
+                    //ACC = (Int16)(final);
                     MAR = "- - - - - - ";
                     MDR = "- - - - - - ";
-                    resultACC = "";
+                    //resultACC = "";
                     nextInst = "nota";
+                    mainMemory.HitorMiss = "  --- ";
                     break;
                 //nothing happens to ACC for these 4 cases, it just jumps back to labelled line
                 case "001010":
@@ -403,6 +427,7 @@ namespace GeminiCore
                     nextInst = "ba " + dispLab;
                     MAR = "- - - - - - ";
                     MDR = "- - - - - - ";
+                    mainMemory.HitorMiss = "  --- ";
                     break;
                 case "001011":
                     //BE, branch if ACC is zero
@@ -422,11 +447,12 @@ namespace GeminiCore
                     {
                         PC = newMem-1;
                     }
-                    Console.WriteLine("Label Name in BE: " + labelName);
-                    Console.WriteLine("dispLab: " + dispLab);
+                    //Console.WriteLine("Label Name in BE: " + labelName);
+                    //Console.WriteLine("dispLab: " + dispLab);
                     nextInst = "be " + dispLab;
                     MAR = "- - - - - - ";
                     MDR = "- - - - - - ";
+                    mainMemory.HitorMiss = "  --- ";
                     break;
                 case "001100":
                     //BL
@@ -439,6 +465,7 @@ namespace GeminiCore
                     nextInst = "bl " + dispLab;
                     MAR = "- - - - - - ";
                     MDR = "- - - - - - ";
+                    mainMemory.HitorMiss = "  --- ";
                     break;
                 case "001101":
                     //BG
@@ -451,6 +478,7 @@ namespace GeminiCore
                     nextInst = "bg " + dispLab;
                     MAR = "- - - - - - ";
                     MDR = "- - - - - - ";
+                    mainMemory.HitorMiss = "  --- ";
                     break;
                 case "001110":
                     //NOP
@@ -458,12 +486,14 @@ namespace GeminiCore
                     nextInst = "nop";
                     MAR = "- - - - - - ";
                     MDR = "- - - - - - ";
+                    mainMemory.HitorMiss = "  --- ";
                     break;
                 case "001111":
                     //HLT
                     nextInst = "hlt";
                     MAR = "- - - - - - ";
                     MDR = "- - - - - - ";
+                    mainMemory.HitorMiss = "";
                     finished = true;
                     PC = 0;
                     break;
@@ -532,10 +562,13 @@ namespace GeminiCore
 
             bin.Reverse();
 
-            while (length < 8)
+            if (length < 8)
             {
-                result = result + "0";
-                length++;
+                while (length < 8)
+                {
+                    result = result + "0";
+                    length++;
+                }
             }
 
             foreach (int i in bin)
@@ -546,6 +579,32 @@ namespace GeminiCore
             return result;
         }
         #endregion
+
+        public string convertToBin(int x)
+        {
+            ArrayList bin = new ArrayList();
+            string result = "";
+            int temp = x;
+            int remainder = 0;
+            int length = 0;
+
+            while (temp > 0)
+            {
+                remainder = temp % 2;
+                temp = temp / 2;
+                bin.Add(remainder);
+                length++;
+            }
+
+            bin.Reverse();
+
+            foreach (int i in bin)
+            {
+                result = result + Convert.ToString(i);
+            }
+
+            return result;
+        }
 
         #region negateBinary
         /*

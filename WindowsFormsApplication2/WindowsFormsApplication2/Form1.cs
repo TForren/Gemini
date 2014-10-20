@@ -1,5 +1,6 @@
 ﻿/**
- * Seth Morecraft
+ * Teague Forren
+ * Johanna Jan
  */
 using System;
 using System.Collections.Generic;
@@ -48,6 +49,12 @@ namespace WindowsFormsApplication2
             LoadLabel.Parent = BackgroundPicBox;
             LoadLabel.Location = pos3;
             LoadLabel.BackColor = Color.Transparent;
+            //hitormissLabel
+            var pos4 = this.PointToScreen(MissOrHitLabel.Location);
+            pos4 = BackgroundPicBox.PointToClient(pos4);
+            MissOrHitLabel.Parent = BackgroundPicBox;
+            MissOrHitLabel.Location = pos4;
+            MissOrHitLabel.BackColor = Color.Transparent;
 #endregion
 
         }
@@ -180,6 +187,9 @@ namespace WindowsFormsApplication2
             this.IRLabel.Text = this.myCPU.IR;
             this.CCLabel.Text = this.myCPU.CC;
             this.nextInstructionDisplayLabel.Text = this.myCPU.nextInst;
+            this.HitCountLabel.Text = Convert.ToString(this.myCPU.getMainMemory().HITCOUNT);
+            this.MissCountLabel.Text = Convert.ToString(this.myCPU.getMainMemory().MISSCOUNT);
+            this.MissOrHitLabel.Text = myCPU.getMainMemory().HitorMiss;
         }
 
 
@@ -294,6 +304,16 @@ namespace WindowsFormsApplication2
             System.Windows.Forms.MessageBox.Show("Finished Code");
             myCPU.resetFields();
             this.setCPUValuesToView();
+        }
+
+        private void label14_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label17_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
