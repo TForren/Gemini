@@ -28,6 +28,22 @@ namespace GeminiCore
             }
         }
 
+        public struct Frame2
+        {
+            public Int16[] value = new Int16[2];
+            public int tag;
+            public Boolean dirty;
+            public Boolean empty;
+
+            public Frame2(Int16[] value, int tag, Boolean dirty, Boolean empty)
+            {
+                this.value = value;
+                this.tag = tag;
+                this.dirty = false;
+                this.empty = true;
+            }
+        }
+
         public struct Set
         {
             public Frame frame1;
@@ -45,6 +61,7 @@ namespace GeminiCore
         Int16[] memoryBook = new Int16[256];
 
         Boolean DirectCache = true;  // Change to false when dealing with 2-way set associative cache
+        Boolean BlockHolds1 = true;  //Change to false when dealing with 2 mem addresses in 1 block
 
         public static int cacheSize = 8;
         public static int numOfSets = cacheSize / 2;
@@ -90,31 +107,63 @@ namespace GeminiCore
         public Int16 getValue(int register)
         {
             Int16 value = 0;
-            if (DirectCache) // We are dealing with Direct Mapped Cache
+            if (BlockHolds1)
             {
-                int frameNum = register % cacheSize;
-                if (cache[frameNum].empty == false && cache[frameNum].tag == register)
+                if (DirectCache) // We are dealing with Direct Mapped Cache
                 {
+                    int frameNum = register % cacheSize;
+                    if (cache[frameNum].empty == false && cache[frameNum].tag == register)
+                    {
 
-                    value = readHit(frameNum,register);
+                        value = readHit(frameNum, register);
+                    }
+                    else
+                    {
+                        value = readMiss(register, frameNum);
+                    }
                 }
-                else
+                else  // We are dealing with 2-way associative cache
                 {
-                    value = readMiss(register, frameNum);
+                    int setNum = register % numOfSets;
+                    if ((cache2[setNum].frame1.empty == false || cache2[setNum].frame2.empty == false) && (cache2[setNum].frame1.tag == register || cache2[setNum].frame2.tag == register))
+                    {
+                        value = readHit(setNum, register);
+                    }
+                    else
+                    {
+                        value = readMiss(register, setNum);
+                    }
                 }
             }
-            else  // We are dealing with 2-way associative cache
+            //block holds 2 mem addresses
+            else
             {
-                int setNum = register % numOfSets;
-                if ((cache2[setNum].frame1.empty == false || cache2[setNum].frame2.empty == false) && (cache2[setNum].frame1.tag == register || cache2[setNum].frame2.tag == register))
+                if (DirectCache) // We are dealing with Direct Mapped Cache
                 {
-                    value = readHit(setNum, register);
+                    int frameNum = register % cacheSize;
+                    if (cache[frameNum].empty == false && cache[frameNum].tag == register)
+                    {
+
+                        value = readHit(frameNum, register);
+                    }
+                    else
+                    {
+                        value = readMiss(register, frameNum);
+                    }
                 }
-                else
+                else  // We are dealing with 2-way associative cache
                 {
-                    value = readMiss(register, setNum);
+                    int setNum = register % numOfSets;
+                    if ((cache2[setNum].frame1.empty == false || cache2[setNum].frame2.empty == false) && (cache2[setNum].frame1.tag == register || cache2[setNum].frame2.tag == register))
+                    {
+                        value = readHit(setNum, register);
+                    }
+                    else
+                    {
+                        value = readMiss(register, setNum);
+                    }
                 }
-            } 
+            }
 
             return value;
         }
@@ -122,29 +171,33 @@ namespace GeminiCore
         //write
         public void setValue(int register, Int16 value)
         {
-            if (DirectCache) // Dealing with Direct Map
+            if (BlockHolds1)
             {
-                int frameNum = register % cacheSize;
-                if (cache[frameNum].empty)
+                if (DirectCache) // Dealing with Direct Map
                 {
-                    writeMiss(register, frameNum, value);
+                    int frameNum = register % cacheSize;
+                    if (cache[frameNum].empty)
+                    {
+                        writeMiss(register, frameNum, value);
+                    }
+                    else
+                    {
+                        writeHit(register, frameNum, value);
+                    }
                 }
-                else
+                else  // We are dealing with 2-way associative cache
                 {
-                    writeHit(register, frameNum, value);
+                    int setNum = register % numOfSets;
+                    if (cache2[setNum].frame1.empty && cache2[setNum].frame2.empty)
+                    {
+                        writeMiss(register, setNum, value);
+                    }
+                    else
+                    {
+                        writeHit(register, setNum, value);
+                    }
                 }
             }
-            else  // We are dealing with 2-way associative cache
-            {
-                int setNum = register % numOfSets;
-                if (cache2[setNum].frame1.empty && cache2[setNum].frame2.empty)
-                {
-                    writeMiss(register, setNum, value);
-                }
-                else {
-                    writeHit(register, setNum, value);
-                }
-            } 
         }
 
         public void writeMiss(int register, int frameNum, Int16 value)
