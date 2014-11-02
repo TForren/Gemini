@@ -180,9 +180,9 @@ namespace GeminiCore
                     dispMem = Convert.ToInt32(convertToBase10(mem));
                     nextInst = "lda " + dispImm + dispMem;
 
-                    mainMemory.printCache(mainMemory.getCache());
+                    //mainMemory.printCache(mainMemory.getCache());
                     //mainMemory.printMemory(mainMemory.getMemoryBook());
-                    mainMemory.printCounts();
+                    //mainMemory.printCounts();
                     break;
                 case "000001":
                     //STA
@@ -201,9 +201,9 @@ namespace GeminiCore
                     dispMem = Convert.ToInt32(convertToBase10(mem));
                     nextInst = "sta " + dispImm + dispMem;
 
-                    mainMemory.printCache(mainMemory.getCache());
+                    //mainMemory.printCache(mainMemory.getCache());
                     //mainMemory.printMemory(mainMemory.getMemoryBook());
-                    mainMemory.printCounts();
+                    //mainMemory.printCounts();
                     break;
                 case "000010":
                     //ADD
