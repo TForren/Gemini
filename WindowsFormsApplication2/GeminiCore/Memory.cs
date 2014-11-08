@@ -73,8 +73,8 @@ namespace GeminiCore
         //Dictionary<string,Int16> memoryBook = new Dictionary<string,Int16>();
         Int16[] memoryBook = new Int16[256];
 
-        Boolean DirectCache = false;  // Change to false when dealing with 2-way set associative cache
-        Boolean BlockHolds1 = false;  //Change to false when dealing with 2 mem addresses in 1 block
+        Boolean DirectCache = true;  // Change to false when dealing with 2-way set associative cache
+        Boolean BlockHolds1 = true;  //Change to false when dealing with 2 mem addresses in 1 block
 
         public static int cacheSize = 4;
         public static int numOfSets = cacheSize / 2;
