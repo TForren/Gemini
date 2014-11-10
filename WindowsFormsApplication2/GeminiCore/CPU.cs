@@ -7,7 +7,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+
 
 namespace GeminiCore
 {
@@ -45,6 +47,8 @@ namespace GeminiCore
         public Boolean finished = false;
         public Boolean broken = false;
 
+        Thread fetch;
+
         public struct Instruction {
             public string opCode;
             public string operand;
@@ -75,6 +79,9 @@ namespace GeminiCore
         public CPU()
         {
             ACC = 0;
+            fetch = new Thread(new ThreadStart(Fetched));
+  //          decodeThread = new Thread(new ThreadStart(PerformDecode));
+
         }
 
         public Memory getMainMemory()
@@ -133,6 +140,7 @@ namespace GeminiCore
             instruction = Decode(fetchedInst);
             storage = Execute(instruction);
             Store(storage);
+
             if (PC + 1 == binary.Count)
             {
                 finished = true;
@@ -265,6 +273,7 @@ namespace GeminiCore
          * */
         #endregion
 
+
         public string Fetched(int PC)
         {
             string temp = binary[PC];
@@ -316,7 +325,6 @@ namespace GeminiCore
             {
                 dispImm = "$";
             }
-            #region switch for each instruction
             switch (binInstr)
             {
                 case "100000":
@@ -346,7 +354,8 @@ namespace GeminiCore
                     }
                     else
                     {
-                        storage.value = Convert.ToInt16(convertToBase10(instr.operand));
+                        storage.value = ACC;
+                        //storage.value = Convert.ToInt16(convertToBase10(instr.operand));
                     }
                     break;
                 case "000010":
@@ -454,6 +463,7 @@ namespace GeminiCore
                 case "001011":
                     //BE, branch if ACC is zero
                     labelName = LabelLocationMap.FirstOrDefault(x => x.Value == ((int)(convertToBase10(instr.operand))));
+                    dispLab = labelName.Key;
                     int newMem = (int)(convertToBase10(instr.operand));
                     if (ACC == 0)
                     {
@@ -469,6 +479,7 @@ namespace GeminiCore
                 case "001100":
                     //BL
                     labelName = LabelLocationMap.FirstOrDefault(x => x.Value == (int)(convertToBase10(instr.operand)));
+                    dispLab = labelName.Key;
                     if (ACC < 0)
                     {
                         PC = labelName.Value - 1;
@@ -483,6 +494,7 @@ namespace GeminiCore
                 case "001101":
                     //BG
                     labelName = LabelLocationMap.FirstOrDefault(x => x.Value == (int)(convertToBase10(instr.operand)));
+                    dispLab = labelName.Key;
                     if (ACC > 0)
                     {
                         PC = labelName.Value - 1;
@@ -736,7 +748,6 @@ namespace GeminiCore
                     PC = 0;
                     break;
             }
-            #endregion
             }
         }
     }
