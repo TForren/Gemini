@@ -15,6 +15,7 @@ namespace GeminiCore
 {
     public class CPU
     {
+        #region Our glorious wonderful CPU properties
         public Int16 ACC { get; private set; }
         public string A;
         public string B;
@@ -44,24 +45,18 @@ namespace GeminiCore
         private string fetchedInst;
         public Boolean finished = false;
         public Boolean broken = false;
+        #endregion
 
+
+        //THREEEEADDDDDSS!!!!!!  (╯°Д°）╯︵ ┻━┻
         Thread fetchThread;
-        AutoResetEvent fetchReset = new AutoResetEvent(false);
+        AutoResetEvent fetchEvent = new AutoResetEvent(false);
         Thread decodeThread;
-        AutoResetEvent decodeReset = new AutoResetEvent(false);
+        AutoResetEvent decodeEvent = new AutoResetEvent(false);
         Thread executeThread;
         AutoResetEvent executeReset = new AutoResetEvent(false);
         Thread storeThread;
         AutoResetEvent storeReset = new AutoResetEvent(false);
-        
-        string instructionS = "";
-        private Instruction instruction;
-        private Storage storage;
-        private Boolean storingDone = false;
-        private Boolean lastFetch = false;
-        private Boolean lastDecode = false;
-        private Boolean lastExecute = false;
-        private Boolean lastStore = false;
 
         public struct Instruction {
             public string opCode;
@@ -89,11 +84,27 @@ namespace GeminiCore
             }
         }
 
+        private string instructionS;
+        private Instruction instruction;
+        private Storage storage;
+        private Boolean storingDone = false;
+        private Boolean lastFetch = false;
+        private Boolean lastDecode = false;
+        private Boolean lastExecute = false;
+        private Boolean lastStore = false;
+
+        bool areWeDone = false;
+
         public CPU()
         {
             ACC = 0;
-            fetchThread = new Thread(new ThreadStart(Fetched));
-            decodeThread = new Thread(new ThreadStart(Decode));
+            instructionS = "null";
+            instruction = new Instruction("null","null",'n');
+            storage = new Storage();
+            storage.noValue = true;
+
+            fetchThread = new Thread(new ThreadStart(PerformFetch));
+            decodeThread = new Thread(new ThreadStart(PerformDecode));
             executeThread = new Thread(new ThreadStart(Execute));
             storeThread = new Thread(new ThreadStart(Store));
 
@@ -103,9 +114,10 @@ namespace GeminiCore
             storeThread.Start();
             
   //          decodeThread = new Thread(new ThreadStart(PerformDecode));
-
+            
         }
 
+        #region SetBinary/getMemory/Locationmap/Stuff
         public Memory getMainMemory()
         {
             return mainMemory;
@@ -154,52 +166,25 @@ namespace GeminiCore
             finished = false;
             broken = false;
         }
-
+        #endregion
 
         public void nextInstruction()
         {
-            fetchReset.Set();
-            decodeReset.Set();
+            Console.WriteLine("String Instruction: " + instructionS);
+            Console.WriteLine("Struct Instruction " + instruction.opCode.ToString());
+        //    Console.WriteLine("storage: " + storage.noValue);
+
+            fetchEvent.Set();
+            decodeEvent.Set();
             executeReset.Set();
             storeReset.Set();
-            /*
-            if (lastFetch == true)
-            {
-                fetchReset.WaitOne();
-            }
-            if (instructionS == "" || lastDecode == true)
-            {
-                decodeReset.WaitOne();
-            }
-            if (instruction.Equals(null) || lastExecute == true)
-            {
-                executeReset.WaitOne();
-            }
-            if (storage.Equals(null))
-            {
-                storeReset.WaitOne();
-            }
-             */
-            if (lastStore == true)
-            {
-                storeReset.WaitOne();
-                finished = true;
-            }
 
-           // Fetched();
-           // Decode();
-           // Execute();
-           // Store();
+//            if (lastStore == true)
+ //           {
+  //              storeReset.WaitOne();
+   //             finished = true;
+    //        }
 
-            //if (PC + 1 == binary.Count)
-            //{
-               // finished = true;
-               // PC = 0;
-            //}
-            //if (finished)
-            //{
-                //Console.WriteLine("finished");
-            //}
             if (ACC > 0)
             {
                 CC = "1";
@@ -217,7 +202,6 @@ namespace GeminiCore
             mem = "";
         }
 
-        #region convertToBase10
         public int convertToBase10(string x)
         {
             double num = 0;
@@ -232,10 +216,8 @@ namespace GeminiCore
             }
             return (int)(num);
         }
-        #endregion
 
         //if this function doesn't work, it's because changed parameter from int to double
-        #region convertToBinary
         public string convertToBinary(int x)
         {
             ArrayList bin = new ArrayList();
@@ -270,7 +252,6 @@ namespace GeminiCore
 
             return result;
         }
-        #endregion
 
         public string convertToBin(int x)
         {
@@ -298,69 +279,110 @@ namespace GeminiCore
             return result;
         }
 
-        #region negateBinary
-        /*
-        public string negateBinary(string x)
+        public void PerformFetch()
         {
-            string result = "";
-            string temp = "";
-            for (int i = 0; i < x.Length; i++)
-            {
-                if (x[i] == '0')
-                {
-                    temp += '1';
-                }
-                else
-                {
-                    temp += '0';
-                }
-            }
-            double curr = convertToBase10(temp);
-            curr++;
-            result = convertToBinary(curr);
-            return result;
-        }
-         * */
-        #endregion
-
-
-        public void Fetched()
-        {
-            Console.WriteLine("Fetch Started");
             while (!lastFetch)
             {
-                Console.WriteLine("In Fetched While loop");
-                fetchReset.WaitOne();
+                fetchEvent.WaitOne();
+
                 if (PC == binary.Count - 1)
                 {
                     Console.WriteLine("Last fetch!");
                     lastFetch = true;
                 }
                 instructionS = binary[PC];
+
+                //PC++;
+
+                Console.WriteLine("In Fetch");
+
+                // if (OnFetchDone != null)
+                //  {
+                //      OnFetchDone(this, new FetchEventArgs(this.IR));
+                //  }
+
+                #region Our old Fetch Code
+                //    Console.WriteLine("Fetch Started");
+                //  while (!lastFetch)
+                //{
+                //      Console.WriteLine("In Fetched While loop");
+                //      fetchReset.WaitOne();
+                //     if (PC == binary.Count - 1)
+                //     {
+                //          Console.WriteLine("Last fetch!");
+                //          lastFetch = true;
+                //       }
+                //      instructionS = binary[PC];
+                //  }
+                //return temp;
+                // fetchReset.WaitOne();
+                #endregion
             }
-            //return temp;
-           // fetchReset.WaitOne();
-            Console.WriteLine("Fetch Reset");
         }
 
-        public void Decode()
+        public void PerformDecode()
         {
             Console.WriteLine("in Decode");
+
             while (!lastDecode)
             {
-                decodeReset.WaitOne();
+                decodeEvent.WaitOne();
+                //IR_D.Decode(this.IR);
+
+                Console.WriteLine("In Decode");
+
+                if (lastFetch == true)
+                {
+                    lastDecode = true;
+                }
+                // Console.WriteLine("instructionS in decode " + instructionS);
+
+                for (int i = 0; i < instructionS.Length; i++)
+                {
+                    if (i >= 0 && i <= 5)
+                    {
+                        instr = instr + instructionS[i];
+                    }
+                    else if (i == 6)
+                    {
+                        imm = instructionS[i];
+                    }
+                    else if (i == 7)
+                    {
+                        sign = instructionS[i];
+                    }
+                    else
+                    {
+                        mem = mem + instructionS[i];
+                    }
+
+                }
+
+                instruction.opCode = instr;
+                instruction.operand = mem;
+                instruction.immediate = imm;
+                instr = "";
+                mem = "";
+            }
+
+            #region Our Old Decode Code
+            /*
+             while (!lastDecode)
+             {
+                decodeEvent.WaitOne();
                 Console.WriteLine("In Decode While loop");
                 if (lastFetch == true)
                 {
                     lastDecode = true;
                 }
-                if (instructionS == "")
+               // Console.WriteLine("instructionS in decode " + instructionS);
+                if (instructionS == "null")
                 {
-                    decodeReset.WaitOne();
+                    decodeEvent.WaitOne();
                 }
                 else
                 {
-                    decodeReset.Set();
+                    decodeEvent.Set();
                 }
 
                 instruction = new Instruction();
@@ -388,15 +410,19 @@ namespace GeminiCore
                 instruction.opCode = instr;
                 instruction.operand = mem;
                 instruction.immediate = imm;
+                instr = "";
+                mem = "";
             }
-            decodeReset.Reset();
             Console.WriteLine("Decode Reset");
             //return instruction;
+            */
+            #endregion
         }
 
         public void Execute()
         {
             Console.WriteLine("in Execute");
+
             while (!lastExecute)
             {
                 executeReset.WaitOne();
@@ -405,14 +431,7 @@ namespace GeminiCore
                 {
                     lastExecute = true;
                 }
-                if (instruction.Equals(null))
-                {
-                    executeReset.WaitOne();
-                }
-                else
-                {
-                    executeReset.Set();
-                }
+
                 storage = new Storage();
                 storage.instruction = instruction;
                 Boolean imm = false;
@@ -626,7 +645,6 @@ namespace GeminiCore
                 }
                 #endregion 
             }
-            executeReset.Reset();
            // return storage;
         }
 
@@ -642,14 +660,7 @@ namespace GeminiCore
                     lastStore = true;
                     finished = true;
                 }
-                if (storage.Equals(null))
-                {
-                    storeReset.WaitOne();
-                }
-                else
-                {
-                    storeReset.Set();
-                }
+
                 Boolean imm = false;
                 if (storage.instruction.immediate == '1')
                 {
@@ -875,7 +886,7 @@ namespace GeminiCore
                     #endregion
                 }
             }
-            storeReset.Reset();
         }
+
     }
 }
