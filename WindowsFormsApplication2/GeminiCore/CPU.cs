@@ -41,13 +41,27 @@ namespace GeminiCore
         private char imm = ' ';
         private char sign = ' ';
         private string mem = "";
-        private Storage storage;
-        private Instruction instruction;
         private string fetchedInst;
         public Boolean finished = false;
         public Boolean broken = false;
 
-        Thread fetch;
+        Thread fetchThread;
+        AutoResetEvent fetchReset = new AutoResetEvent(false);
+        Thread decodeThread;
+        AutoResetEvent decodeReset = new AutoResetEvent(false);
+        Thread executeThread;
+        AutoResetEvent executeReset = new AutoResetEvent(false);
+        Thread storeThread;
+        AutoResetEvent storeReset = new AutoResetEvent(false);
+        
+        string instructionS = "";
+        private Instruction instruction;
+        private Storage storage;
+        private Boolean storingDone = false;
+        private Boolean lastFetch = false;
+        private Boolean lastDecode = false;
+        private Boolean lastExecute = false;
+        private Boolean lastStore = false;
 
         public struct Instruction {
             public string opCode;
@@ -59,8 +73,7 @@ namespace GeminiCore
                 this.opCode = opCode;
                 this.operand = operand;
                 this.immediate = immediate;
-            }
-            
+            }        
         }
 
         public struct Storage {
@@ -79,7 +92,16 @@ namespace GeminiCore
         public CPU()
         {
             ACC = 0;
-            fetch = new Thread(new ThreadStart(Fetched));
+            fetchThread = new Thread(new ThreadStart(Fetched));
+            decodeThread = new Thread(new ThreadStart(Decode));
+            executeThread = new Thread(new ThreadStart(Execute));
+            storeThread = new Thread(new ThreadStart(Store));
+
+            fetchThread.Start();
+            decodeThread.Start();
+            executeThread.Start();
+            storeThread.Start();
+            
   //          decodeThread = new Thread(new ThreadStart(PerformDecode));
 
         }
@@ -136,20 +158,48 @@ namespace GeminiCore
 
         public void nextInstruction()
         {
-            fetchedInst = Fetched(PC);
-            instruction = Decode(fetchedInst);
-            storage = Execute(instruction);
-            Store(storage);
-
-            if (PC + 1 == binary.Count)
+            fetchReset.Set();
+            decodeReset.Set();
+            executeReset.Set();
+            storeReset.Set();
+            /*
+            if (lastFetch == true)
             {
+                fetchReset.WaitOne();
+            }
+            if (instructionS == "" || lastDecode == true)
+            {
+                decodeReset.WaitOne();
+            }
+            if (instruction.Equals(null) || lastExecute == true)
+            {
+                executeReset.WaitOne();
+            }
+            if (storage.Equals(null))
+            {
+                storeReset.WaitOne();
+            }
+             */
+            if (lastStore == true)
+            {
+                storeReset.WaitOne();
                 finished = true;
-                PC = 0;
             }
-            if (finished)
-            {
+
+           // Fetched();
+           // Decode();
+           // Execute();
+           // Store();
+
+            //if (PC + 1 == binary.Count)
+            //{
+               // finished = true;
+               // PC = 0;
+            //}
+            //if (finished)
+            //{
                 //Console.WriteLine("finished");
-            }
+            //}
             if (ACC > 0)
             {
                 CC = "1";
@@ -274,481 +324,558 @@ namespace GeminiCore
         #endregion
 
 
-        public string Fetched(int PC)
+        public void Fetched()
         {
-            string temp = binary[PC];
-            return temp;
+            Console.WriteLine("Fetch Started");
+            while (!lastFetch)
+            {
+                Console.WriteLine("In Fetched While loop");
+                fetchReset.WaitOne();
+                if (PC == binary.Count - 1)
+                {
+                    Console.WriteLine("Last fetch!");
+                    lastFetch = true;
+                }
+                instructionS = binary[PC];
+            }
+            //return temp;
+           // fetchReset.WaitOne();
+            Console.WriteLine("Fetch Reset");
         }
 
-        public Instruction Decode(string temp)
+        public void Decode()
         {
-            Instruction instruction = new Instruction();
-
-            for (int i = 0; i < temp.Length; i++)
+            Console.WriteLine("in Decode");
+            while (!lastDecode)
             {
-                if (i >= 0 && i <= 5)
+                decodeReset.WaitOne();
+                Console.WriteLine("In Decode While loop");
+                if (lastFetch == true)
                 {
-                    instr = instr + temp[i];
+                    lastDecode = true;
                 }
-                else if (i == 6)
+                if (instructionS == "")
                 {
-                    imm = temp[i];
-                }
-                else if (i == 7)
-                {
-                    sign = temp[i];
+                    decodeReset.WaitOne();
                 }
                 else
                 {
-                    mem = mem + temp[i];
+                    decodeReset.Set();
                 }
 
+                instruction = new Instruction();
+
+                for (int i = 0; i < instructionS.Length; i++)
+                {
+                    if (i >= 0 && i <= 5)
+                    {
+                        instr = instr + instructionS[i];
+                    }
+                    else if (i == 6)
+                    {
+                        imm = instructionS[i];
+                    }
+                    else if (i == 7)
+                    {
+                        sign = instructionS[i];
+                    }
+                    else
+                    {
+                        mem = mem + instructionS[i];
+                    }
+
+                }
+                instruction.opCode = instr;
+                instruction.operand = mem;
+                instruction.immediate = imm;
             }
-            instruction.opCode = instr;
-            instruction.operand = mem;
-            instruction.immediate = imm;
-            return instruction;
+            decodeReset.Reset();
+            Console.WriteLine("Decode Reset");
+            //return instruction;
         }
 
-        public Storage Execute(Instruction instr)
+        public void Execute()
         {
-            Storage storage = new Storage();
-            storage.instruction = instr;
-            Boolean imm = false;
-            string binInstr = instr.opCode;
-            if (instr.immediate == '1')
+            Console.WriteLine("in Execute");
+            while (!lastExecute)
             {
-                imm = true;
-                dispImm = "#$";
-            }
-            else
-            {
-                dispImm = "$";
-            }
-            switch (binInstr)
-            {
-                case "100000":
-                    storage.noValue = true;
-                    var labelName = LabelLocationMap.FirstOrDefault(x => x.Value == (int)(convertToBase10(instr.operand)));
-                    nextInst = labelName.Key + ":";
-                    MAR = "- - - - - - -";
-                    MDR = "- - - - - - -";
-                    mainMemory.HitorMiss = "  --- ";
-                    break;
-                case "000000":
-                    //LDA
-                    if (imm)
-                    {
-                        storage.value = Convert.ToInt16(convertToBase10(instr.operand));
-                    }
-                    else
-                    {
-                        storage.value = mainMemory.getValue(convertToBase10(instr.operand));
-                    }
-                    break;
-                case "000001":
-                    //STA
-                    if (imm)
-                    {
-                        //throw exception, PC is line number
-                    }
-                    else
-                    {
-                        storage.value = ACC;
-                        //storage.value = Convert.ToInt16(convertToBase10(instr.operand));
-                    }
-                    break;
-                case "000010":
-                    //ADD
-                    if (imm)
-                    {
-                        storage.value = (Int16)(ACC + convertToBase10(instr.operand));
-                    }
-                    else
-                    {
-                        storage.value = (Int16)(ACC + mainMemory.getValue(convertToBase10(instr.operand)));
-                    }
-                    break;
-                case "000011":
-                    //SUB
-                    if (imm)
-                    {
-                        storage.value = (Int16)(ACC - convertToBase10(instr.operand));
-                    }
-                    else
-                    {
-                        storage.value = (Int16)(ACC - mainMemory.getValue(convertToBase10(instr.operand)));
-                    }
-                    break;
-                case "000100":
-                    //mul
-                    if(imm)
-                    {
-                        storage.value = (Int16)(ACC * convertToBase10(instr.operand));
-                    }
-                    else
-                    {
-                        storage.value = (Int16)(ACC * mainMemory.getValue(convertToBase10(instr.operand)));
-                    }
-                    break;
-                case "000101":
-                    //div
-                    if (imm)
-                    {
-                        storage.value = (Int16)(ACC / convertToBase10(instr.operand));
-                    }
-                    else
-                    {
-                        storage.value = (Int16)(ACC / mainMemory.getValue(convertToBase10(instr.operand)));
-                    }
-                    break;
-                case "000110":
-                    //and
-                    if (imm)
-                    {
-                        storage.value = (Int16)(ACC & convertToBase10(instr.operand));
-                    }
-                    else
-                    {
-                        storage.value = (Int16)(ACC & mainMemory.getValue(convertToBase10(instr.operand)));
-                    }
-                    break;
-                case "000111":
-                    //or
-                    if (imm)
-                    {
-                        storage.value = (Int16)(ACC | (Int16)(convertToBase10(instr.operand)));
-                    }
-                    else
-                    {
-                        storage.value = (Int16)(ACC | mainMemory.getValue(convertToBase10(instr.operand)));
-                    }
-                    break;
-                case "001000":
-                    //SHL
-                    if (imm)
-                    {
-                        string binAcc = convertToBin(ACC);
-                        Int16 value = (Int16)(convertToBase10(instr.operand));
-                        string afterSHL = "";
-                        for (int k = (int)value; k < binAcc.Length; k++)
-                        {
-                            afterSHL += binAcc[k];
-                        }
-                        for (int j = 0; j < (int)value; j++)
-                        {
-                            afterSHL += '0';
-                        }
-                        storage.value = (Int16)(convertToBase10(afterSHL));
-                    }
-                    break;
-                case "001001":
-                    //NOTA
-                    storage.value = (Int16)(~ACC);
-                    break;
-
-                //nothing happens to ACC for these 4 cases, it just jumps back to labelled line
-                case "001010":
-                    //BA
-                    labelName = LabelLocationMap.FirstOrDefault(x => x.Value == (int)(convertToBase10(instr.operand)));
-                    dispLab = labelName.Key;
-                    PC = labelName.Value - 1;
-                    storage.noValue = true;
-
-                    nextInst = "ba " + dispLab;
-                    MAR = "- - - - - - ";
-                    MDR = "- - - - - - ";
-                    mainMemory.HitorMiss = "  --- ";
-                    break;
-                case "001011":
-                    //BE, branch if ACC is zero
-                    labelName = LabelLocationMap.FirstOrDefault(x => x.Value == ((int)(convertToBase10(instr.operand))));
-                    dispLab = labelName.Key;
-                    int newMem = (int)(convertToBase10(instr.operand));
-                    if (ACC == 0)
-                    {
-                        PC = newMem - 1;
-                    }
-                    storage.noValue = true;
-
-                    nextInst = "be " + dispLab;
-                    MAR = "- - - - - - ";
-                    MDR = "- - - - - - ";
-                    mainMemory.HitorMiss = "  --- ";
-                    break;
-                case "001100":
-                    //BL
-                    labelName = LabelLocationMap.FirstOrDefault(x => x.Value == (int)(convertToBase10(instr.operand)));
-                    dispLab = labelName.Key;
-                    if (ACC < 0)
-                    {
-                        PC = labelName.Value - 1;
-                    }
-                    storage.noValue = true;
-
-                    nextInst = "bl " + dispLab;
-                    MAR = "- - - - - - ";
-                    MDR = "- - - - - - ";
-                    mainMemory.HitorMiss = "  --- ";
-                    break;
-                case "001101":
-                    //BG
-                    labelName = LabelLocationMap.FirstOrDefault(x => x.Value == (int)(convertToBase10(instr.operand)));
-                    dispLab = labelName.Key;
-                    if (ACC > 0)
-                    {
-                        PC = labelName.Value - 1;
-                    }
-                    storage.noValue = true;
-
-                    nextInst = "bg " + dispLab;
-                    MAR = "- - - - - - ";
-                    MDR = "- - - - - - ";
-                    mainMemory.HitorMiss = "  --- ";
-                    break;
-                case "001110":
-                    //NOP
-                    storage.value = (Int16)(ACC + 0);
-                    break;
-                case "001111":
-                    //HLT
-                    storage.noValue = true;
-
-                    nextInst = "hlt";
-                    MAR = "- - - - - - ";
-                    MDR = "- - - - - - ";
-                    mainMemory.HitorMiss = "";
-                    finished = true;
-                    PC = 0;
-                    break;
-            }
-            return storage;
-        }
-
-        public void Store(Storage storage)
-        {
-            Boolean imm = false;
-            if (storage.instruction.immediate == '1')
-            {
-                imm = true;
-                dispImm = "#$";
-            }
-            else
-            {
-                dispImm = "$";
-            }
-            if (!storage.noValue)
-            {
-            string binInstr = storage.instruction.opCode;
-            switch (binInstr)
-            {
-                case "100000":
-                    var labelName = LabelLocationMap.FirstOrDefault(x => x.Value == (int)(convertToBase10(mem)));
-                    break;
-                case "000000":
-                    //LDA
-                    if (imm)
-                    {
-                        ACC = storage.value;
+                executeReset.WaitOne();
+                Console.WriteLine("In Execute While loop");
+                if (lastDecode == true)
+                {
+                    lastExecute = true;
+                }
+                if (instruction.Equals(null))
+                {
+                    executeReset.WaitOne();
+                }
+                else
+                {
+                    executeReset.Set();
+                }
+                storage = new Storage();
+                storage.instruction = instruction;
+                Boolean imm = false;
+                string binInstr = instruction.opCode;
+                if (instruction.immediate == '1')
+                {
+                    imm = true;
+                    dispImm = "#$";
+                }
+                else
+                {
+                    dispImm = "$";
+                }
+                #region Case switch for instructions
+                switch (binInstr)
+                {
+                    case "100000":
+                        storage.noValue = true;
+                        var labelName = LabelLocationMap.FirstOrDefault(x => x.Value == (int)(convertToBase10(instruction.operand)));
+                        nextInst = labelName.Key + ":";
                         MAR = "- - - - - - -";
+                        MDR = "- - - - - - -";
                         mainMemory.HitorMiss = "  --- ";
-                        MDR = mem;
-                    }
-                    else
-                    {
-                        ACC = storage.value;
-                        MAR = mem;
-                        MDR = convertToBinary(ACC);
-                    }
-                    dispMem = Convert.ToInt32(convertToBase10(storage.instruction.operand));
-                    nextInst = "lda " + dispImm + dispMem;
-                    break;
-                case "000001":
-                    //STA
+                        break;
+                    case "000000":
+                        //LDA
+                        if (imm)
+                        {
+                            storage.value = Convert.ToInt16(convertToBase10(instruction.operand));
+                        }
+                        else
+                        {
+                            storage.value = mainMemory.getValue(convertToBase10(instruction.operand));
+                        }
+                        break;
+                    case "000001":
+                        //STA
+                        if (imm)
+                        {
+                            //throw exception, PC is line number
+                        }
+                        else
+                        {
+                            storage.value = ACC;
+                            //storage.value = Convert.ToInt16(convertToBase10(instr.operand));
+                        }
+                        break;
+                    case "000010":
+                        //ADD
+                        if (imm)
+                        {
+                            storage.value = (Int16)(ACC + convertToBase10(instruction.operand));
+                        }
+                        else
+                        {
+                            storage.value = (Int16)(ACC + mainMemory.getValue(convertToBase10(instruction.operand)));
+                        }
+                        break;
+                    case "000011":
+                        //SUB
+                        if (imm)
+                        {
+                            storage.value = (Int16)(ACC - convertToBase10(instruction.operand));
+                        }
+                        else
+                        {
+                            storage.value = (Int16)(ACC - mainMemory.getValue(convertToBase10(instruction.operand)));
+                        }
+                        break;
+                    case "000100":
+                        //mul
+                        if (imm)
+                        {
+                            storage.value = (Int16)(ACC * convertToBase10(instruction.operand));
+                        }
+                        else
+                        {
+                            storage.value = (Int16)(ACC * mainMemory.getValue(convertToBase10(instruction.operand)));
+                        }
+                        break;
+                    case "000101":
+                        //div
+                        if (imm)
+                        {
+                            storage.value = (Int16)(ACC / convertToBase10(instruction.operand));
+                        }
+                        else
+                        {
+                            storage.value = (Int16)(ACC / mainMemory.getValue(convertToBase10(instruction.operand)));
+                        }
+                        break;
+                    case "000110":
+                        //and
+                        if (imm)
+                        {
+                            storage.value = (Int16)(ACC & convertToBase10(instruction.operand));
+                        }
+                        else
+                        {
+                            storage.value = (Int16)(ACC & mainMemory.getValue(convertToBase10(instruction.operand)));
+                        }
+                        break;
+                    case "000111":
+                        //or
+                        if (imm)
+                        {
+                            storage.value = (Int16)(ACC | (Int16)(convertToBase10(instruction.operand)));
+                        }
+                        else
+                        {
+                            storage.value = (Int16)(ACC | mainMemory.getValue(convertToBase10(instruction.operand)));
+                        }
+                        break;
+                    case "001000":
+                        //SHL
+                        if (imm)
+                        {
+                            string binAcc = convertToBin(ACC);
+                            Int16 value = (Int16)(convertToBase10(instruction.operand));
+                            string afterSHL = "";
+                            for (int k = (int)value; k < binAcc.Length; k++)
+                            {
+                                afterSHL += binAcc[k];
+                            }
+                            for (int j = 0; j < (int)value; j++)
+                            {
+                                afterSHL += '0';
+                            }
+                            storage.value = (Int16)(convertToBase10(afterSHL));
+                        }
+                        break;
+                    case "001001":
+                        //NOTA
+                        storage.value = (Int16)(~ACC);
+                        break;
 
-                    if (imm)
-                    {
-                        //exception
-                    }
-                    else
-                    {
-                        mainMemory.setValue(convertToBase10(storage.instruction.operand), storage.value);
-                        MAR = storage.instruction.operand;
-                        MDR = convertToBinary(storage.value);
-                    }
+                    //nothing happens to ACC for these 4 cases, it just jumps back to labelled line
+                    case "001010":
+                        //BA
+                        labelName = LabelLocationMap.FirstOrDefault(x => x.Value == (int)(convertToBase10(instruction.operand)));
+                        dispLab = labelName.Key;
+                        PC = labelName.Value - 1;
+                        storage.noValue = true;
 
-                    dispMem = Convert.ToInt32(convertToBase10(storage.instruction.operand));
-                    nextInst = "sta " + dispImm + dispMem;
-                    break;
-                case "000010":
-                    //ADD
-                    if (imm)
-                    {
-                        ACC = storage.value;
+                        nextInst = "ba " + dispLab;
                         MAR = "- - - - - - ";
-                        MDR = storage.instruction.operand;
-                    }
-                    else
-                    {
-                        ACC = storage.value;
-                        MAR = storage.instruction.operand;
-                        MDR = convertToBinary(mainMemory.getValue(convertToBase10(storage.instruction.operand)));
-                    }
-                    dispMem = Convert.ToInt32(convertToBase10(storage.instruction.operand));
-                    nextInst = "add " + dispImm + dispMem;
-                    mainMemory.HitorMiss = "  --- ";
-                    break;
-                case "000011":
-                    //SUB
+                        MDR = "- - - - - - ";
+                        mainMemory.HitorMiss = "  --- ";
+                        break;
+                    case "001011":
+                        //BE, branch if ACC is zero
+                        labelName = LabelLocationMap.FirstOrDefault(x => x.Value == ((int)(convertToBase10(instruction.operand))));
+                        dispLab = labelName.Key;
+                        int newMem = (int)(convertToBase10(instruction.operand));
+                        if (ACC == 0)
+                        {
+                            PC = newMem - 1;
+                        }
+                        storage.noValue = true;
 
-                    if (imm)
-                    {
-                        ACC = storage.value;
-                        MAR = "- - - - - - - ";
-                        MDR = storage.instruction.operand;
-                    }
-                    else
-                    {
-                        ACC = storage.value;
-                        MAR = storage.instruction.operand;
-                        MDR = convertToBinary(mainMemory.getValue(convertToBase10(storage.instruction.operand)));
-                    }
-                    dispMem = Convert.ToInt32(convertToBase10(storage.instruction.operand));
-                    nextInst = "sub " + dispImm + dispMem;
-                    mainMemory.HitorMiss = "  --- ";
-                    break;
-                case "000100":
-                    //mul
-                    if (imm)
-                    {
-                        ACC = storage.value;
-                        MAR = "- - - - - - - ";
-                        MDR = storage.instruction.operand;
-                    }
-                    else
-                    {
-                        ACC = storage.value;
-                        MAR = storage.instruction.operand;
-                        MDR = convertToBinary(mainMemory.getValue(convertToBase10(storage.instruction.operand)));
+                        nextInst = "be " + dispLab;
+                        MAR = "- - - - - - ";
+                        MDR = "- - - - - - ";
+                        mainMemory.HitorMiss = "  --- ";
+                        break;
+                    case "001100":
+                        //BL
+                        labelName = LabelLocationMap.FirstOrDefault(x => x.Value == (int)(convertToBase10(instruction.operand)));
+                        dispLab = labelName.Key;
+                        if (ACC < 0)
+                        {
+                            PC = labelName.Value - 1;
+                        }
+                        storage.noValue = true;
 
-                    }
-                    dispMem = Convert.ToInt32(convertToBase10(storage.instruction.operand));
-                    nextInst = "mul " + dispImm + dispMem;
-                    mainMemory.HitorMiss = "  --- ";
-                    break;
-                case "000101":
-                    //div
-                    if (imm)
-                    {
-                        ACC = storage.value;
-                        MAR = "- - - - - - - ";
-                        MDR = storage.instruction.operand;
-                    }
-                    else
-                    {
-                        ACC = storage.value;
-                        MAR = storage.instruction.operand;
-                        MDR = convertToBinary(mainMemory.getValue(convertToBase10(storage.instruction.operand)));
-                    }
-                    dispMem = Convert.ToInt32(convertToBase10(storage.instruction.operand));
-                    nextInst = "div " + dispImm + dispMem;
-                    mainMemory.HitorMiss = "  --- ";
-                    break;
-                case "000110":
-                    //and
-                    if (imm)
-                    {
-                        ACC = storage.value;
-                        MAR = "- - - - - - -";
-                        MDR = storage.instruction.operand;
-                    }
-                    else
-                    {
-                        ACC = storage.value;
-                        MAR = storage.instruction.operand;
-                        //MDR = convertToBinary(mainMemory.getMemoryBook()[convertToBase10(mem)]);
-                        MDR = convertToBinary(mainMemory.getValue(convertToBase10(storage.instruction.operand)));
-                    }
-                    dispMem = Convert.ToInt32(convertToBase10(storage.instruction.operand));
-                    nextInst = "and " + dispImm + dispMem;
-                    mainMemory.HitorMiss = "  --- ";
-                    break;
-                case "000111":
-                    //or
-                    if (imm)
-                    {
-                        ACC = storage.value;
-                        MAR = "- - - - - - -";
-                        MDR = storage.instruction.operand;
-                    }
-                    else
-                    {
-                        ACC = storage.value;
-                        MAR = storage.instruction.operand;
-                        MDR = convertToBinary(mainMemory.getValue(convertToBase10(storage.instruction.operand)));
-                    }
-                    dispMem = Convert.ToInt32(convertToBase10(storage.instruction.operand));
-                    nextInst = "or " + dispImm + dispMem;
-                    mainMemory.HitorMiss = "  --- ";
-                    break;
-                case "001000":
-                    //SHL, if value is negative, should we shift right?
-                    if (imm)
-                    {
-                        ACC = storage.value;
-                        MAR = "- - - - - - -";
-                        MDR = storage.instruction.operand;
-                    }
-                    else
-                    {
-                        //throw exception at "PC" line
-                    }
-                    dispMem = Convert.ToInt32(convertToBase10(storage.instruction.operand));
-                    nextInst = "shl " + dispImm + dispMem;
-                    mainMemory.HitorMiss = "  --- ";
-                    break;
-                case "001001":
-                    //NOTA
-                    ACC = storage.value;
-                    MAR = "- - - - - - ";
-                    MDR = "- - - - - - ";
-                    nextInst = "nota";
-                    mainMemory.HitorMiss = "  --- ";
-                    break;
-                //never gets here in storage, branches don't need storage
-                case "001010":
-                    //BA
-                    labelName = LabelLocationMap.FirstOrDefault(x => x.Value == (int)(convertToBase10(mem)));
-                    PC = labelName.Value-1;
-                    
-                    break;
-                case "001011":
-                    //BE, branch if ACC is zero
-                    labelName = LabelLocationMap.FirstOrDefault(x => x.Value == ((int)(convertToBase10(mem))));
-                    int newMem = (int)(convertToBase10(mem));
-                    break;
-                case "001100":
-                    //BL
-                    labelName = LabelLocationMap.FirstOrDefault(x => x.Value == (int)(convertToBase10(mem)));
-                    break;
-                case "001101":
-                    //BG
-                    labelName = LabelLocationMap.FirstOrDefault(x => x.Value == (int)(convertToBase10(mem)));
-                    break;
-                case "001110":
-                    //NOP
-                    ACC = storage.value;
-                    nextInst = "nop";
-                    MAR = "- - - - - - ";
-                    MDR = "- - - - - - ";
-                    mainMemory.HitorMiss = "  --- ";
-                    break;
-                case "001111":
-                    //HLT
-                    PC = 0;
-                    break;
+                        nextInst = "bl " + dispLab;
+                        MAR = "- - - - - - ";
+                        MDR = "- - - - - - ";
+                        mainMemory.HitorMiss = "  --- ";
+                        break;
+                    case "001101":
+                        //BG
+                        labelName = LabelLocationMap.FirstOrDefault(x => x.Value == (int)(convertToBase10(instruction.operand)));
+                        dispLab = labelName.Key;
+                        if (ACC > 0)
+                        {
+                            PC = labelName.Value - 1;
+                        }
+                        storage.noValue = true;
+
+                        nextInst = "bg " + dispLab;
+                        MAR = "- - - - - - ";
+                        MDR = "- - - - - - ";
+                        mainMemory.HitorMiss = "  --- ";
+                        break;
+                    case "001110":
+                        //NOP
+                        storage.value = (Int16)(ACC + 0);
+                        break;
+                    case "001111":
+                        //HLT
+                        storage.noValue = true;
+
+                        nextInst = "hlt";
+                        MAR = "- - - - - - ";
+                        MDR = "- - - - - - ";
+                        mainMemory.HitorMiss = "";
+                        finished = true;
+                        PC = 0;
+                        break;
+                }
+                #endregion 
             }
+            executeReset.Reset();
+           // return storage;
+        }
+
+        public void Store()
+        {
+            Console.WriteLine("in Store");
+            while (!lastStore)
+            {
+                storeReset.WaitOne();
+                Console.WriteLine("In Store While loop");
+                if (lastExecute == true)
+                {
+                    lastStore = true;
+                    finished = true;
+                }
+                if (storage.Equals(null))
+                {
+                    storeReset.WaitOne();
+                }
+                else
+                {
+                    storeReset.Set();
+                }
+                Boolean imm = false;
+                if (storage.instruction.immediate == '1')
+                {
+                    imm = true;
+                    dispImm = "#$";
+                }
+                else
+                {
+                    dispImm = "$";
+                }
+                if (!storage.noValue)
+                {
+                    string binInstr = storage.instruction.opCode;
+                    #region Switch case for instructions
+                    switch (binInstr)
+                    {
+                        case "100000":
+                            var labelName = LabelLocationMap.FirstOrDefault(x => x.Value == (int)(convertToBase10(mem)));
+                            break;
+                        case "000000":
+                            //LDA
+                            if (imm)
+                            {
+                                ACC = storage.value;
+                                MAR = "- - - - - - -";
+                                mainMemory.HitorMiss = "  --- ";
+                                MDR = mem;
+                            }
+                            else
+                            {
+                                ACC = storage.value;
+                                MAR = mem;
+                                MDR = convertToBinary(ACC);
+                            }
+                            dispMem = Convert.ToInt32(convertToBase10(storage.instruction.operand));
+                            nextInst = "lda " + dispImm + dispMem;
+                            break;
+                        case "000001":
+                            //STA
+
+                            if (imm)
+                            {
+                                //exception
+                            }
+                            else
+                            {
+                                mainMemory.setValue(convertToBase10(storage.instruction.operand), storage.value);
+                                MAR = storage.instruction.operand;
+                                MDR = convertToBinary(storage.value);
+                            }
+
+                            dispMem = Convert.ToInt32(convertToBase10(storage.instruction.operand));
+                            nextInst = "sta " + dispImm + dispMem;
+                            break;
+                        case "000010":
+                            //ADD
+                            if (imm)
+                            {
+                                ACC = storage.value;
+                                MAR = "- - - - - - ";
+                                MDR = storage.instruction.operand;
+                            }
+                            else
+                            {
+                                ACC = storage.value;
+                                MAR = storage.instruction.operand;
+                                MDR = convertToBinary(mainMemory.getValue(convertToBase10(storage.instruction.operand)));
+                            }
+                            dispMem = Convert.ToInt32(convertToBase10(storage.instruction.operand));
+                            nextInst = "add " + dispImm + dispMem;
+                            mainMemory.HitorMiss = "  --- ";
+                            break;
+                        case "000011":
+                            //SUB
+
+                            if (imm)
+                            {
+                                ACC = storage.value;
+                                MAR = "- - - - - - - ";
+                                MDR = storage.instruction.operand;
+                            }
+                            else
+                            {
+                                ACC = storage.value;
+                                MAR = storage.instruction.operand;
+                                MDR = convertToBinary(mainMemory.getValue(convertToBase10(storage.instruction.operand)));
+                            }
+                            dispMem = Convert.ToInt32(convertToBase10(storage.instruction.operand));
+                            nextInst = "sub " + dispImm + dispMem;
+                            mainMemory.HitorMiss = "  --- ";
+                            break;
+                        case "000100":
+                            //mul
+                            if (imm)
+                            {
+                                ACC = storage.value;
+                                MAR = "- - - - - - - ";
+                                MDR = storage.instruction.operand;
+                            }
+                            else
+                            {
+                                ACC = storage.value;
+                                MAR = storage.instruction.operand;
+                                MDR = convertToBinary(mainMemory.getValue(convertToBase10(storage.instruction.operand)));
+
+                            }
+                            dispMem = Convert.ToInt32(convertToBase10(storage.instruction.operand));
+                            nextInst = "mul " + dispImm + dispMem;
+                            mainMemory.HitorMiss = "  --- ";
+                            break;
+                        case "000101":
+                            //div
+                            if (imm)
+                            {
+                                ACC = storage.value;
+                                MAR = "- - - - - - - ";
+                                MDR = storage.instruction.operand;
+                            }
+                            else
+                            {
+                                ACC = storage.value;
+                                MAR = storage.instruction.operand;
+                                MDR = convertToBinary(mainMemory.getValue(convertToBase10(storage.instruction.operand)));
+                            }
+                            dispMem = Convert.ToInt32(convertToBase10(storage.instruction.operand));
+                            nextInst = "div " + dispImm + dispMem;
+                            mainMemory.HitorMiss = "  --- ";
+                            break;
+                        case "000110":
+                            //and
+                            if (imm)
+                            {
+                                ACC = storage.value;
+                                MAR = "- - - - - - -";
+                                MDR = storage.instruction.operand;
+                            }
+                            else
+                            {
+                                ACC = storage.value;
+                                MAR = storage.instruction.operand;
+                                //MDR = convertToBinary(mainMemory.getMemoryBook()[convertToBase10(mem)]);
+                                MDR = convertToBinary(mainMemory.getValue(convertToBase10(storage.instruction.operand)));
+                            }
+                            dispMem = Convert.ToInt32(convertToBase10(storage.instruction.operand));
+                            nextInst = "and " + dispImm + dispMem;
+                            mainMemory.HitorMiss = "  --- ";
+                            break;
+                        case "000111":
+                            //or
+                            if (imm)
+                            {
+                                ACC = storage.value;
+                                MAR = "- - - - - - -";
+                                MDR = storage.instruction.operand;
+                            }
+                            else
+                            {
+                                ACC = storage.value;
+                                MAR = storage.instruction.operand;
+                                MDR = convertToBinary(mainMemory.getValue(convertToBase10(storage.instruction.operand)));
+                            }
+                            dispMem = Convert.ToInt32(convertToBase10(storage.instruction.operand));
+                            nextInst = "or " + dispImm + dispMem;
+                            mainMemory.HitorMiss = "  --- ";
+                            break;
+                        case "001000":
+                            //SHL, if value is negative, should we shift right?
+                            if (imm)
+                            {
+                                ACC = storage.value;
+                                MAR = "- - - - - - -";
+                                MDR = storage.instruction.operand;
+                            }
+                            else
+                            {
+                                //throw exception at "PC" line
+                            }
+                            dispMem = Convert.ToInt32(convertToBase10(storage.instruction.operand));
+                            nextInst = "shl " + dispImm + dispMem;
+                            mainMemory.HitorMiss = "  --- ";
+                            break;
+                        case "001001":
+                            //NOTA
+                            ACC = storage.value;
+                            MAR = "- - - - - - ";
+                            MDR = "- - - - - - ";
+                            nextInst = "nota";
+                            mainMemory.HitorMiss = "  --- ";
+                            break;
+                        //never gets here in storage, branches don't need storage
+                        case "001010":
+                            //BA
+                            labelName = LabelLocationMap.FirstOrDefault(x => x.Value == (int)(convertToBase10(mem)));
+                            PC = labelName.Value - 1;
+
+                            break;
+                        case "001011":
+                            //BE, branch if ACC is zero
+                            labelName = LabelLocationMap.FirstOrDefault(x => x.Value == ((int)(convertToBase10(mem))));
+                            int newMem = (int)(convertToBase10(mem));
+                            break;
+                        case "001100":
+                            //BL
+                            labelName = LabelLocationMap.FirstOrDefault(x => x.Value == (int)(convertToBase10(mem)));
+                            break;
+                        case "001101":
+                            //BG
+                            labelName = LabelLocationMap.FirstOrDefault(x => x.Value == (int)(convertToBase10(mem)));
+                            break;
+                        case "001110":
+                            //NOP
+                            ACC = storage.value;
+                            nextInst = "nop";
+                            MAR = "- - - - - - ";
+                            MDR = "- - - - - - ";
+                            mainMemory.HitorMiss = "  --- ";
+                            break;
+                        case "001111":
+                            //HLT
+                            PC = 0;
+                            break;
+                    }
+                    #endregion
+                }
             }
+            storeReset.Reset();
         }
     }
 }
