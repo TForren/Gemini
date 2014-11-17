@@ -8,9 +8,11 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Drawing;
 using System.IO;
 
 using GeminiCore;
@@ -32,30 +34,28 @@ namespace WindowsFormsApplication2
             #region GUI pretty stuff. Making transparencies
             //Making the Acc labels transparent with the picturebox background
             //Label1 = "ACC:"
-            var pos = this.PointToScreen(label1.Location);
-            pos = BackgroundPicBox.PointToClient(pos);
-            label1.Parent = BackgroundPicBox;
-            label1.Location = pos;
-            label1.BackColor = Color.Transparent;
+  //          var pos = this.PointToScreen(label1.Location);
+ //           pos = BackgroundPicBox.PointToClient(pos);
+ //          label1.Parent = BackgroundPicBox;
+ //           label1.Location = pos;
+ //           label1.BackColor = Color.Transparent;
             //AccLabel
             var pos2 = this.PointToScreen(accLabel.Location);
             pos2 = BackgroundPicBox.PointToClient(pos2);
             accLabel.Parent = BackgroundPicBox;
             accLabel.Location = pos2;
             accLabel.BackColor = Color.Transparent;
-            //Loadlabel
-            var pos3 = this.PointToScreen(LoadLabel.Location);
+            //"HIT!" or "MISS!" Label
+            var pos3 = this.PointToScreen(MissOrHitLabel.Location);
             pos3 = BackgroundPicBox.PointToClient(pos3);
-            LoadLabel.Parent = BackgroundPicBox;
-            LoadLabel.Location = pos3;
-            LoadLabel.BackColor = Color.Transparent;
-            //hitormissLabel
-            var pos4 = this.PointToScreen(MissOrHitLabel.Location);
-            pos4 = BackgroundPicBox.PointToClient(pos4);
             MissOrHitLabel.Parent = BackgroundPicBox;
-            MissOrHitLabel.Location = pos4;
+            MissOrHitLabel.Location = pos3;
             MissOrHitLabel.BackColor = Color.Transparent;
-#endregion
+
+
+            MaximizeBox = false;
+
+            #endregion
 
         }
 
@@ -70,6 +70,10 @@ namespace WindowsFormsApplication2
                     {
                         var ipe = new IPE(ofd.FileName);
                         List<string> binary = ipe.ParseFile();
+                        //for (int i = 0; i < binary.Count; i++)
+                        //{
+                        //    Console.WriteLine("parser at " + i + ": " + binary[i]);
+                       // }
                         List<Int16> finBinary = convert(binary);
                         //ipe.createBinaryTextFile(binary);
                         createBinaryFile(finBinary);
@@ -186,6 +190,13 @@ namespace WindowsFormsApplication2
             this.TEMPLabel.Text = this.myCPU.TEMP;
             this.IRLabel.Text = this.myCPU.IR;
             this.CCLabel.Text = this.myCPU.CC;
+
+            //Pipeline UI
+            this.FetchDisplayLabel.Text = this.myCPU.dispFetchInstr;
+            this.DecodeDisplayLabel.Text = this.myCPU.dispDecodeInstr;
+            this.ExecuteDisplayLabel.Text = this.myCPU.dispExecuteInstr;
+            this.StoreDisplayLabel.Text = this.myCPU.dispStoreInstr;
+
             this.nextInstructionDisplayLabel.Text = this.myCPU.nextInst;
             this.HitCountLabel.Text = Convert.ToString(this.myCPU.getMainMemory().HITCOUNT);
             this.MissCountLabel.Text = Convert.ToString(this.myCPU.getMainMemory().MISSCOUNT);
@@ -312,6 +323,16 @@ namespace WindowsFormsApplication2
         }
 
         private void label17_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void tableLayoutPanel3_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void label1_Click_1(object sender, EventArgs e)
         {
 
         }

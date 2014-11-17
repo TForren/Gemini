@@ -31,6 +31,12 @@ namespace GeminiCore
         public string dispImm;
         public string dispLab;
 
+        public string dispFetchInstr;
+        public string dispDecodeInstr;
+        public string dispExecuteInstr;
+        public string dispStoreInstr;
+        public string currentDisp;
+
         public Int32 dispMem;
 
         private List<string> binary;
@@ -54,9 +60,9 @@ namespace GeminiCore
         Thread decodeThread;
         AutoResetEvent decodeEvent = new AutoResetEvent(false);
         Thread executeThread;
-        AutoResetEvent executeReset = new AutoResetEvent(false);
+        AutoResetEvent executeEvent = new AutoResetEvent(false);
         Thread storeThread;
-        AutoResetEvent storeReset = new AutoResetEvent(false);
+        AutoResetEvent storeEvent = new AutoResetEvent(false);
 
         public struct Instruction {
             public string opCode;
@@ -92,6 +98,11 @@ namespace GeminiCore
         private Boolean lastDecode = false;
         private Boolean lastExecute = false;
         private Boolean lastStore = false;
+
+        private Boolean fetchRunning = false;
+        private Boolean decodeRunning = false;
+        private Boolean executeRunning = false;
+        private Boolean storeRunning = false;
 
         bool areWeDone = false;
 
@@ -148,6 +159,26 @@ namespace GeminiCore
 
         public void resetFields()
         {
+
+            instructionS = "";
+            instruction = new Instruction();
+            storage = new Storage();
+            storingDone = false;
+            lastFetch = false;
+            lastDecode = false;
+            lastExecute = false;
+            lastStore = false;
+
+            fetchRunning = false;
+            decodeRunning = false;
+            executeRunning = false;
+            storeRunning = false;
+
+            fetchEvent.Set();
+            decodeEvent.Set();
+            executeEvent.Set();
+            storeEvent.Set();
+
             ACC = 0;
             A = "- - - - - - - - -";
             B = "- - - - - - - - -";
@@ -165,20 +196,41 @@ namespace GeminiCore
             mainMemory.MISSCOUNT = 0;
             finished = false;
             broken = false;
+
+            dispFetchInstr = "- - - - - - - - -";
+            dispDecodeInstr = "- - - - - - - - -";
+            dispExecuteInstr = "- - - - - - - - -";
+            dispStoreInstr = "- - - - - - - - -";
+
+
         }
         #endregion
 
         public void nextInstruction()
         {
-            Console.WriteLine("String Instruction: " + instructionS);
-            Console.WriteLine("Struct Instruction " + instruction.opCode.ToString());
+            //Console.WriteLine("String Instruction: " + instructionS);
+            //Console.WriteLine("Struct Instruction " + instruction.opCode.ToString());
         //    Console.WriteLine("storage: " + storage.noValue);
 
             fetchEvent.Set();
             decodeEvent.Set();
-            executeReset.Set();
-            storeReset.Set();
+            executeEvent.Set();
+            storeEvent.Set();
 
+            /*
+            if (PC > 0)
+            {
+                decodeEvent.Set();
+            }
+            if (PC > 1)
+            {
+                executeEvent.Set();
+            }
+            if (PC > 2)
+            {
+                storeEvent.Set();
+            }
+            */
 //            if (lastStore == true)
  //           {
   //              storeReset.WaitOne();
@@ -201,6 +253,8 @@ namespace GeminiCore
             instr = "";
             mem = "";
         }
+
+        #region Converting Stuff
 
         public int convertToBase10(string x)
         {
@@ -278,23 +332,254 @@ namespace GeminiCore
 
             return result;
         }
+        #endregion
 
+
+        public string findInstruction(string binaryInstruction)
+        {
+            string opcode = "";
+            string immediate = "";
+            string operand = "";
+            string instruction = "";
+            int dispMem;
+            for (int i = 0; i < binaryInstruction.Length; i++)
+            {
+                if (i >= 0 && i <= 5)
+                {
+                    opcode += binaryInstruction[i];
+                }
+                if (i == 6)
+                {
+                    if (binaryInstruction[i] == '1')
+                    {
+                        immediate = "#$";
+                    }
+                    else
+                    {
+                        immediate = "$";
+                    }
+                }
+                if (i >= 8)
+                {
+                    operand += binaryInstruction[i];
+                }
+            }
+            #region Switch case for instructions
+            switch (opcode)
+            {
+                case "100000":
+                    var labelName = LabelLocationMap.FirstOrDefault(x => x.Value == (int)(convertToBase10(operand)));
+                    instruction = labelName.Key + ":";
+                    break;
+                case "000000":
+                    //LDA
+                    //Console.WriteLine("in find instruction lda");
+                    dispMem = Convert.ToInt32(convertToBase10(operand));
+                    instruction = "lda " + immediate + dispMem;
+                    break;
+                case "000001":
+                    //STA
+                    dispMem = Convert.ToInt32(convertToBase10(operand));
+                    instruction = "sta " + immediate + dispMem;
+                    break;
+                case "000010":
+                    //ADD
+                    dispMem = Convert.ToInt32(convertToBase10(operand));
+                    instruction = "add " + immediate + dispMem;
+                    break;
+                case "000011":
+                    //SUB
+                    dispMem = Convert.ToInt32(convertToBase10(operand));
+                    instruction = "sub " + immediate + dispMem;
+                    break;
+                case "000100":
+                    //mul
+                    dispMem = Convert.ToInt32(convertToBase10(operand));
+                    instruction = "mul " + immediate + dispMem;
+                    break;
+                case "000101":
+                    //div
+                    dispMem = Convert.ToInt32(operand);
+                    instruction = "div " + immediate + dispMem;
+                    break;
+                case "000110":
+                    //and
+                    dispMem = Convert.ToInt32(convertToBase10(operand));
+                    instruction = "and " + immediate + dispMem;
+                    break;
+                case "000111":
+                    //or
+                    dispMem = Convert.ToInt32(convertToBase10(operand));
+                    instruction = "or " + immediate + dispMem;
+                    break;
+                case "001000":
+                    //SHL
+                    dispMem = Convert.ToInt32(convertToBase10(operand));
+                    instruction = "shl " + immediate + dispMem;
+                    break;
+                case "001001":
+                    //NOTA
+                    instruction = "nota";
+                    break;
+                //never gets here in storage, branches don't need storage
+                case "001010":
+                    //BA
+                    labelName = LabelLocationMap.FirstOrDefault(x => x.Value == (int)(convertToBase10(operand)));
+                    instruction = "ba " + labelName;
+                    //PC = labelName.Value - 1;
+                    break;
+                case "001011":
+                    //BE, branch if ACC is zero
+                    labelName = LabelLocationMap.FirstOrDefault(x => x.Value == ((int)(convertToBase10(operand))));
+                    instruction = "be " + labelName;
+                    break;
+                case "001100":
+                    //BL
+                    labelName = LabelLocationMap.FirstOrDefault(x => x.Value == (int)(convertToBase10(operand)));
+                    instruction = "bl " + labelName;
+                    break;
+                case "001101":
+                    //BG
+                    labelName = LabelLocationMap.FirstOrDefault(x => x.Value == (int)(convertToBase10(operand)));
+                    instruction = "bg " + labelName;
+                    break;
+                case "001110":
+                    //NOP
+                    instruction = "nop";
+                    break;
+                case "001111":
+                    //HLT
+                    instruction = "hlt";
+                    break;
+            }
+            #endregion
+
+            return instruction;
+        }
+
+        public string findInstruction(Instruction findIn)
+        {
+            string instruction = "";
+            string opcode = findIn.opCode;
+            string operand = findIn.operand;
+            string immediate = "";
+            if (findIn.immediate == '0')
+            {
+                immediate = "$";
+            }
+            else
+            {
+                immediate = "#$";
+            }
+            #region Switch case for instructions
+            switch (opcode)
+            {
+                case "100000":
+                    var labelName = LabelLocationMap.FirstOrDefault(x => x.Value == (int)(convertToBase10(operand)));
+                    instruction = labelName.Key + ":";
+                    break;
+                case "000000":
+                    //LDA
+                    //Console.WriteLine("in find instruction lda");
+                    dispMem = Convert.ToInt32(convertToBase10(operand));
+                    instruction = "lda " + immediate + dispMem;
+                    break;
+                case "000001":
+                    //STA
+                    dispMem = Convert.ToInt32(convertToBase10(operand));
+                    instruction = "sta " + immediate + dispMem;
+                    break;
+                case "000010":
+                    //ADD
+                    dispMem = Convert.ToInt32(convertToBase10(operand));
+                    instruction = "add " + immediate + dispMem;
+                    break;
+                case "000011":
+                    //SUB
+                    dispMem = Convert.ToInt32(convertToBase10(operand));
+                    instruction = "sub " + immediate + dispMem;
+                    break;
+                case "000100":
+                    //mul
+                    dispMem = Convert.ToInt32(convertToBase10(operand));
+                    instruction = "mul " + immediate + dispMem;
+                    break;
+                case "000101":
+                    //div
+                    dispMem = Convert.ToInt32(operand);
+                    instruction = "div " + immediate + dispMem;
+                    break;
+                case "000110":
+                    //and
+                    dispMem = Convert.ToInt32(convertToBase10(operand));
+                    instruction = "and " + immediate + dispMem;
+                    break;
+                case "000111":
+                    //or
+                    dispMem = Convert.ToInt32(convertToBase10(operand));
+                    instruction = "or " + immediate + dispMem;
+                    break;
+                case "001000":
+                    //SHL
+                    dispMem = Convert.ToInt32(convertToBase10(operand));
+                    instruction = "shl " + immediate + dispMem;
+                    break;
+                case "001001":
+                    //NOTA
+                    instruction = "nota";
+                    break;
+                //never gets here in storage, branches don't need storage
+                case "001010":
+                    //BA
+                    labelName = LabelLocationMap.FirstOrDefault(x => x.Value == (int)(convertToBase10(operand)));
+                    instruction = "ba " + labelName;
+                    //PC = labelName.Value - 1;
+                    break;
+                case "001011":
+                    //BE, branch if ACC is zero
+                    labelName = LabelLocationMap.FirstOrDefault(x => x.Value == ((int)(convertToBase10(operand))));
+                    instruction = "be " + labelName;
+                    break;
+                case "001100":
+                    //BL
+                    labelName = LabelLocationMap.FirstOrDefault(x => x.Value == (int)(convertToBase10(operand)));
+                    instruction = "bl " + labelName;
+                    break;
+                case "001101":
+                    //BG
+                    labelName = LabelLocationMap.FirstOrDefault(x => x.Value == (int)(convertToBase10(operand)));
+                    instruction = "bg " + labelName;
+                    break;
+                case "001110":
+                    //NOP
+                    instruction = "nop";
+                    break;
+                case "001111":
+                    //HLT
+                    instruction = "hlt";
+                    break;
+            }
+            #endregion
+
+            return instruction;
+        }
         public void PerformFetch()
         {
             while (!lastFetch)
             {
                 fetchEvent.WaitOne();
 
+                Console.WriteLine("In Fetch");
+                currentDisp = findInstruction(binary[PC]);
+                dispFetchInstr = currentDisp;
                 if (PC == binary.Count - 1)
                 {
                     Console.WriteLine("Last fetch!");
                     lastFetch = true;
                 }
                 instructionS = binary[PC];
-
+                //Console.WriteLine("instructionS " + instructionS);
                 //PC++;
-
-                Console.WriteLine("In Fetch");
 
                 // if (OnFetchDone != null)
                 //  {
@@ -302,6 +587,7 @@ namespace GeminiCore
                 //  }
 
                 #region Our old Fetch Code
+
                 //    Console.WriteLine("Fetch Started");
                 //  while (!lastFetch)
                 //{
@@ -316,21 +602,23 @@ namespace GeminiCore
                 //  }
                 //return temp;
                 // fetchReset.WaitOne();
+
                 #endregion
             }
         }
 
         public void PerformDecode()
         {
-            Console.WriteLine("in Decode");
 
             while (!lastDecode)
             {
-                decodeEvent.WaitOne();
+                executeEvent.WaitOne();
                 //IR_D.Decode(this.IR);
 
-                Console.WriteLine("In Decode");
+                //dispDecodeInstr = findInstruction(instructionS);
 
+                Console.WriteLine("In Decode");
+                dispDecodeInstr = findInstruction(instructionS);
                 if (lastFetch == true)
                 {
                     lastDecode = true;
@@ -421,12 +709,12 @@ namespace GeminiCore
 
         public void Execute()
         {
-            Console.WriteLine("in Execute");
-
             while (!lastExecute)
             {
-                executeReset.WaitOne();
-                Console.WriteLine("In Execute While loop");
+                executeEvent.WaitOne();
+
+                Console.WriteLine("in Execute");
+                dispExecuteInstr = findInstruction(instruction);
                 if (lastDecode == true)
                 {
                     lastExecute = true;
@@ -452,6 +740,7 @@ namespace GeminiCore
                         storage.noValue = true;
                         var labelName = LabelLocationMap.FirstOrDefault(x => x.Value == (int)(convertToBase10(instruction.operand)));
                         nextInst = labelName.Key + ":";
+                        //Console.WriteLine("In Execute next instr: " + nextInst);
                         MAR = "- - - - - - -";
                         MDR = "- - - - - - -";
                         mainMemory.HitorMiss = "  --- ";
@@ -643,18 +932,20 @@ namespace GeminiCore
                         PC = 0;
                         break;
                 }
-                #endregion 
+                #endregion
+
             }
            // return storage;
         }
 
         public void Store()
         {
-            Console.WriteLine("in Store");
             while (!lastStore)
             {
-                storeReset.WaitOne();
-                Console.WriteLine("In Store While loop");
+                storeEvent.WaitOne();
+
+                Console.WriteLine("in Store");
+                dispStoreInstr = findInstruction(storage.instruction);
                 if (lastExecute == true)
                 {
                     lastStore = true;
@@ -678,7 +969,7 @@ namespace GeminiCore
                     switch (binInstr)
                     {
                         case "100000":
-                            var labelName = LabelLocationMap.FirstOrDefault(x => x.Value == (int)(convertToBase10(mem)));
+                            var labelName = LabelLocationMap.FirstOrDefault(x => x.Value == (int)(convertToBase10(storage.instruction.operand)));
                             break;
                         case "000000":
                             //LDA
@@ -853,22 +1144,22 @@ namespace GeminiCore
                         //never gets here in storage, branches don't need storage
                         case "001010":
                             //BA
-                            labelName = LabelLocationMap.FirstOrDefault(x => x.Value == (int)(convertToBase10(mem)));
+                            labelName = LabelLocationMap.FirstOrDefault(x => x.Value == (int)(convertToBase10(storage.instruction.operand)));
                             PC = labelName.Value - 1;
 
                             break;
                         case "001011":
                             //BE, branch if ACC is zero
-                            labelName = LabelLocationMap.FirstOrDefault(x => x.Value == ((int)(convertToBase10(mem))));
+                            labelName = LabelLocationMap.FirstOrDefault(x => x.Value == ((int)(convertToBase10(storage.instruction.operand))));
                             int newMem = (int)(convertToBase10(mem));
                             break;
                         case "001100":
                             //BL
-                            labelName = LabelLocationMap.FirstOrDefault(x => x.Value == (int)(convertToBase10(mem)));
+                            labelName = LabelLocationMap.FirstOrDefault(x => x.Value == (int)(convertToBase10(storage.instruction.operand)));
                             break;
                         case "001101":
                             //BG
-                            labelName = LabelLocationMap.FirstOrDefault(x => x.Value == (int)(convertToBase10(mem)));
+                            labelName = LabelLocationMap.FirstOrDefault(x => x.Value == (int)(convertToBase10(storage.instruction.operand)));
                             break;
                         case "001110":
                             //NOP
@@ -884,6 +1175,13 @@ namespace GeminiCore
                             break;
                     }
                     #endregion
+                }
+                if (finished)
+                {
+                    fetchEvent.Reset();
+                    decodeEvent.Reset();
+                    executeEvent.Reset();
+                    storeEvent.Reset();
                 }
             }
         }
