@@ -93,6 +93,11 @@ namespace GeminiCore
         private string instructionS;
         private Instruction instruction;
         private Storage storage;
+
+        private string instructionSOrig;
+        private Instruction instructionOrig;
+        private Storage storageOrig; 
+        
         private Boolean storingDone = false;
         private Boolean lastFetch = false;
         private Boolean lastDecode = false;
@@ -109,8 +114,9 @@ namespace GeminiCore
         public CPU()
         {
             ACC = 0;
-            instructionS = "null";
-            instruction = new Instruction("null","null",'n');
+            //instructionS = "null";
+            //instructionSOrig = "null";
+            //instruction = new Instruction("null","null",'n');
             storage = new Storage();
             storage.noValue = true;
 
@@ -212,12 +218,12 @@ namespace GeminiCore
             //Console.WriteLine("Struct Instruction " + instruction.opCode.ToString());
         //    Console.WriteLine("storage: " + storage.noValue);
 
-            fetchEvent.Set();
-            decodeEvent.Set();
-            executeEvent.Set();
-            storeEvent.Set();
+            //fetchEvent.Set();
+            //decodeEvent.Set();
+            //executeEvent.Set();
+           // storeEvent.Set();
 
-            /*
+            fetchEvent.Set();
             if (PC > 0)
             {
                 decodeEvent.Set();
@@ -230,7 +236,14 @@ namespace GeminiCore
             {
                 storeEvent.Set();
             }
-            */
+             
+
+            //fetchEvent.WaitOne();
+
+            instructionS = instructionSOrig;
+            instruction = instructionOrig;
+            storage = storageOrig;
+            
 //            if (lastStore == true)
  //           {
   //              storeReset.WaitOne();
@@ -342,6 +355,8 @@ namespace GeminiCore
             string operand = "";
             string instruction = "";
             int dispMem;
+            //Console.WriteLine(binaryInstruction);
+            //Console.WriteLine(binaryInstruction.Length);
             for (int i = 0; i < binaryInstruction.Length; i++)
             {
                 if (i >= 0 && i <= 5)
@@ -568,16 +583,24 @@ namespace GeminiCore
             while (!lastFetch)
             {
                 fetchEvent.WaitOne();
-
+                
                 Console.WriteLine("In Fetch");
-                currentDisp = findInstruction(binary[PC]);
-                dispFetchInstr = currentDisp;
                 if (PC == binary.Count - 1)
                 {
                     Console.WriteLine("Last fetch!");
                     lastFetch = true;
                 }
-                instructionS = binary[PC];
+                dispFetchInstr = findInstruction(binary[PC]);
+                instructionSOrig = binary[PC];
+
+                //fetchEvent.WaitOne();
+
+                //instructionS = instructionSOrig;
+
+                //fetchEvent.WaitOne();
+
+                //decodeEvent.Set();
+
                 //Console.WriteLine("instructionS " + instructionS);
                 //PC++;
 
@@ -609,22 +632,29 @@ namespace GeminiCore
 
         public void PerformDecode()
         {
-
             while (!lastDecode)
             {
-                executeEvent.WaitOne();
+                decodeEvent.WaitOne();
                 //IR_D.Decode(this.IR);
 
                 //dispDecodeInstr = findInstruction(instructionS);
-
                 Console.WriteLine("In Decode");
-                dispDecodeInstr = findInstruction(instructionS);
+                
                 if (lastFetch == true)
                 {
                     lastDecode = true;
                 }
                 // Console.WriteLine("instructionS in decode " + instructionS);
-
+                //if (instructionS == "null")
+                //{
+                //    decodeEvent.WaitOne();
+                //}
+                Console.WriteLine("instructionS in decode: " + instructionS);
+                dispDecodeInstr = findInstruction(instructionS);
+                string instr = "";
+                char imm = ' ';
+                char sign;
+                string mem = "";
                 for (int i = 0; i < instructionS.Length; i++)
                 {
                     if (i >= 0 && i <= 5)
@@ -646,11 +676,23 @@ namespace GeminiCore
 
                 }
 
-                instruction.opCode = instr;
-                instruction.operand = mem;
-                instruction.immediate = imm;
+                instructionOrig.opCode = instr;
+                instructionOrig.operand = mem;
+                instructionOrig.immediate = imm;
                 instr = "";
+                imm = ' ';
                 mem = "";
+
+                //decodeEvent.WaitOne();
+
+                //fetchEvent.Set();
+
+                //instruction = instructionOrig;
+
+                //decodeEvent.WaitOne();
+
+
+                //executeEvent.Set();
             }
 
             #region Our Old Decode Code
@@ -714,14 +756,13 @@ namespace GeminiCore
                 executeEvent.WaitOne();
 
                 Console.WriteLine("in Execute");
-                dispExecuteInstr = findInstruction(instruction);
                 if (lastDecode == true)
                 {
                     lastExecute = true;
                 }
-
-                storage = new Storage();
-                storage.instruction = instruction;
+                dispExecuteInstr = findInstruction(instruction);
+                storageOrig = new Storage();
+                storageOrig.instruction = instruction;
                 Boolean imm = false;
                 string binInstr = instruction.opCode;
                 if (instruction.immediate == '1')
@@ -737,7 +778,7 @@ namespace GeminiCore
                 switch (binInstr)
                 {
                     case "100000":
-                        storage.noValue = true;
+                        storageOrig.noValue = true;
                         var labelName = LabelLocationMap.FirstOrDefault(x => x.Value == (int)(convertToBase10(instruction.operand)));
                         nextInst = labelName.Key + ":";
                         //Console.WriteLine("In Execute next instr: " + nextInst);
@@ -749,11 +790,11 @@ namespace GeminiCore
                         //LDA
                         if (imm)
                         {
-                            storage.value = Convert.ToInt16(convertToBase10(instruction.operand));
+                            storageOrig.value = Convert.ToInt16(convertToBase10(instruction.operand));
                         }
                         else
                         {
-                            storage.value = mainMemory.getValue(convertToBase10(instruction.operand));
+                            storageOrig.value = mainMemory.getValue(convertToBase10(instruction.operand));
                         }
                         break;
                     case "000001":
@@ -764,7 +805,7 @@ namespace GeminiCore
                         }
                         else
                         {
-                            storage.value = ACC;
+                            storageOrig.value = ACC;
                             //storage.value = Convert.ToInt16(convertToBase10(instr.operand));
                         }
                         break;
@@ -772,66 +813,66 @@ namespace GeminiCore
                         //ADD
                         if (imm)
                         {
-                            storage.value = (Int16)(ACC + convertToBase10(instruction.operand));
+                            storageOrig.value = (Int16)(ACC + convertToBase10(instruction.operand));
                         }
                         else
                         {
-                            storage.value = (Int16)(ACC + mainMemory.getValue(convertToBase10(instruction.operand)));
+                            storageOrig.value = (Int16)(ACC + mainMemory.getValue(convertToBase10(instruction.operand)));
                         }
                         break;
                     case "000011":
                         //SUB
                         if (imm)
                         {
-                            storage.value = (Int16)(ACC - convertToBase10(instruction.operand));
+                            storageOrig.value = (Int16)(ACC - convertToBase10(instruction.operand));
                         }
                         else
                         {
-                            storage.value = (Int16)(ACC - mainMemory.getValue(convertToBase10(instruction.operand)));
+                            storageOrig.value = (Int16)(ACC - mainMemory.getValue(convertToBase10(instruction.operand)));
                         }
                         break;
                     case "000100":
                         //mul
                         if (imm)
                         {
-                            storage.value = (Int16)(ACC * convertToBase10(instruction.operand));
+                            storageOrig.value = (Int16)(ACC * convertToBase10(instruction.operand));
                         }
                         else
                         {
-                            storage.value = (Int16)(ACC * mainMemory.getValue(convertToBase10(instruction.operand)));
+                            storageOrig.value = (Int16)(ACC * mainMemory.getValue(convertToBase10(instruction.operand)));
                         }
                         break;
                     case "000101":
                         //div
                         if (imm)
                         {
-                            storage.value = (Int16)(ACC / convertToBase10(instruction.operand));
+                            storageOrig.value = (Int16)(ACC / convertToBase10(instruction.operand));
                         }
                         else
                         {
-                            storage.value = (Int16)(ACC / mainMemory.getValue(convertToBase10(instruction.operand)));
+                            storageOrig.value = (Int16)(ACC / mainMemory.getValue(convertToBase10(instruction.operand)));
                         }
                         break;
                     case "000110":
                         //and
                         if (imm)
                         {
-                            storage.value = (Int16)(ACC & convertToBase10(instruction.operand));
+                            storageOrig.value = (Int16)(ACC & convertToBase10(instruction.operand));
                         }
                         else
                         {
-                            storage.value = (Int16)(ACC & mainMemory.getValue(convertToBase10(instruction.operand)));
+                            storageOrig.value = (Int16)(ACC & mainMemory.getValue(convertToBase10(instruction.operand)));
                         }
                         break;
                     case "000111":
                         //or
                         if (imm)
                         {
-                            storage.value = (Int16)(ACC | (Int16)(convertToBase10(instruction.operand)));
+                            storageOrig.value = (Int16)(ACC | (Int16)(convertToBase10(instruction.operand)));
                         }
                         else
                         {
-                            storage.value = (Int16)(ACC | mainMemory.getValue(convertToBase10(instruction.operand)));
+                            storageOrig.value = (Int16)(ACC | mainMemory.getValue(convertToBase10(instruction.operand)));
                         }
                         break;
                     case "001000":
@@ -849,12 +890,12 @@ namespace GeminiCore
                             {
                                 afterSHL += '0';
                             }
-                            storage.value = (Int16)(convertToBase10(afterSHL));
+                            storageOrig.value = (Int16)(convertToBase10(afterSHL));
                         }
                         break;
                     case "001001":
                         //NOTA
-                        storage.value = (Int16)(~ACC);
+                        storageOrig.value = (Int16)(~ACC);
                         break;
 
                     //nothing happens to ACC for these 4 cases, it just jumps back to labelled line
@@ -863,7 +904,7 @@ namespace GeminiCore
                         labelName = LabelLocationMap.FirstOrDefault(x => x.Value == (int)(convertToBase10(instruction.operand)));
                         dispLab = labelName.Key;
                         PC = labelName.Value - 1;
-                        storage.noValue = true;
+                        storageOrig.noValue = true;
 
                         nextInst = "ba " + dispLab;
                         MAR = "- - - - - - ";
@@ -879,7 +920,7 @@ namespace GeminiCore
                         {
                             PC = newMem - 1;
                         }
-                        storage.noValue = true;
+                        storageOrig.noValue = true;
 
                         nextInst = "be " + dispLab;
                         MAR = "- - - - - - ";
@@ -894,7 +935,7 @@ namespace GeminiCore
                         {
                             PC = labelName.Value - 1;
                         }
-                        storage.noValue = true;
+                        storageOrig.noValue = true;
 
                         nextInst = "bl " + dispLab;
                         MAR = "- - - - - - ";
@@ -909,7 +950,7 @@ namespace GeminiCore
                         {
                             PC = labelName.Value - 1;
                         }
-                        storage.noValue = true;
+                        storageOrig.noValue = true;
 
                         nextInst = "bg " + dispLab;
                         MAR = "- - - - - - ";
@@ -918,11 +959,11 @@ namespace GeminiCore
                         break;
                     case "001110":
                         //NOP
-                        storage.value = (Int16)(ACC + 0);
+                        storageOrig.value = (Int16)(ACC + 0);
                         break;
                     case "001111":
                         //HLT
-                        storage.noValue = true;
+                        storageOrig.noValue = true;
 
                         nextInst = "hlt";
                         MAR = "- - - - - - ";
@@ -935,7 +976,13 @@ namespace GeminiCore
                 #endregion
 
             }
-           // return storage;
+            //executeEvent.WaitOne();
+
+            //decodeEvent.Set();
+            //storage = storageOrig;
+
+            //executeEvent.WaitOne();
+            //storeEvent.Set();
         }
 
         public void Store()
@@ -945,13 +992,12 @@ namespace GeminiCore
                 storeEvent.WaitOne();
 
                 Console.WriteLine("in Store");
-                dispStoreInstr = findInstruction(storage.instruction);
                 if (lastExecute == true)
                 {
                     lastStore = true;
                     finished = true;
                 }
-
+                dispStoreInstr = findInstruction(storage.instruction);
                 Boolean imm = false;
                 if (storage.instruction.immediate == '1')
                 {
@@ -1176,6 +1222,7 @@ namespace GeminiCore
                     }
                     #endregion
                 }
+                /*
                 if (finished)
                 {
                     fetchEvent.Reset();
@@ -1183,6 +1230,10 @@ namespace GeminiCore
                     executeEvent.Reset();
                     storeEvent.Reset();
                 }
+                */
+                //storeEvent.WaitOne();
+
+                //executeEvent.Set();
             }
         }
 
