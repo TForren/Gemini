@@ -52,6 +52,34 @@ namespace WindowsFormsApplication2
             MissOrHitLabel.Location = pos3;
             MissOrHitLabel.BackColor = Color.Transparent;
 
+            //Pipeline UI
+            var FetchPos = this.PointToScreen(FetchDisplayLabel.Location);
+            FetchPos = BackgroundPicBox.PointToClient(FetchPos);
+            FetchDisplayLabel.Parent = BackgroundPicBox;
+            FetchDisplayLabel.Location = FetchPos;
+            FetchDisplayLabel.BackColor = Color.Transparent;
+
+            //Decode
+            var DecodePos = this.PointToScreen(DecodeDisplayLabel.Location);
+            DecodePos = BackgroundPicBox.PointToClient(DecodePos);
+            DecodeDisplayLabel.Parent = BackgroundPicBox;
+            DecodeDisplayLabel.Location = DecodePos;
+            DecodeDisplayLabel.BackColor = Color.Transparent;
+
+            //Execute
+            var ExecutePos = this.PointToScreen(ExecuteDisplayLabel.Location);
+            ExecutePos = BackgroundPicBox.PointToClient(ExecutePos);
+            ExecuteDisplayLabel.Parent = BackgroundPicBox;
+            ExecuteDisplayLabel.Location = ExecutePos;
+            ExecuteDisplayLabel.BackColor = Color.Transparent;
+
+            //Store
+            var StorePos = this.PointToScreen(StoreDisplayLabel.Location);
+            StorePos = BackgroundPicBox.PointToClient(StorePos);
+            StoreDisplayLabel.Parent = BackgroundPicBox;
+            StoreDisplayLabel.Location = StorePos;
+            StoreDisplayLabel.BackColor = Color.Transparent;
+
 
             MaximizeBox = false;
 
