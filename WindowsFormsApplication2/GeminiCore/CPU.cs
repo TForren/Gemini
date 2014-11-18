@@ -5,6 +5,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -98,11 +99,15 @@ namespace GeminiCore
         private Instruction instructionOrig;
         private Storage storageOrig; 
         
-        private Boolean storingDone = false;
         private Boolean lastFetch = false;
         private Boolean lastDecode = false;
         private Boolean lastExecute = false;
         private Boolean lastStore = false;
+
+        private Boolean lastFetchOrig = false;
+        private Boolean lastDecodeOrig = false;
+        private Boolean lastExecuteOrig = false;
+        private Boolean lastStoreOrig = false;
 
         private Boolean fetchRunning = false;
         private Boolean decodeRunning = false;
@@ -110,6 +115,7 @@ namespace GeminiCore
         private Boolean storeRunning = false;
 
         bool areWeDone = false;
+        private int counter;
 
         public CPU()
         {
@@ -169,7 +175,7 @@ namespace GeminiCore
             instructionS = "";
             instruction = new Instruction();
             storage = new Storage();
-            storingDone = false;
+            //storingDone = false;
             lastFetch = false;
             lastDecode = false;
             lastExecute = false;
@@ -222,33 +228,46 @@ namespace GeminiCore
             //decodeEvent.Set();
             //executeEvent.Set();
            // storeEvent.Set();
-
-            fetchEvent.Set();
-            if (PC > 0)
+            Console.WriteLine("count " + PC);
+            if (PC < binary.Count - 1)
+            {
+                fetchEvent.Set();
+            }
+            if (PC > 0 && PC < binary.Count)
             {
                 decodeEvent.Set();
             }
-            if (PC > 1)
+            if (PC > 1 && PC < binary.Count + 1)
             {
                 executeEvent.Set();
             }
-            if (PC > 2)
+            if (PC > 2 && PC < binary.Count + 2)
             {
                 storeEvent.Set();
             }
-             
+            if (PC >= binary.Count + 2)
+            {
+                finished = true;
+            }
 
-            //fetchEvent.WaitOne();
-
+       
             instructionS = instructionSOrig;
             instruction = instructionOrig;
             storage = storageOrig;
-            
-//            if (lastStore == true)
- //           {
-  //              storeReset.WaitOne();
-   //             finished = true;
-    //        }
+
+            /*
+            lastFetch = lastFetchOrig;
+            lastDecode = lastDecodeOrig;
+            lastExecute = lastExecuteOrig;
+            lastStore = lastStoreOrig;
+            */
+            /*
+            if (lastStore == true)
+            {
+                storeEvent.WaitOne();
+                finished = true;
+            }
+            */
 
             if (ACC > 0)
             {
@@ -580,7 +599,7 @@ namespace GeminiCore
         }
         public void PerformFetch()
         {
-            while (!lastFetch)
+            while (!areWeDone)
             {
                 fetchEvent.WaitOne();
                 
@@ -632,7 +651,7 @@ namespace GeminiCore
 
         public void PerformDecode()
         {
-            while (!lastDecode)
+            while (!areWeDone)
             {
                 decodeEvent.WaitOne();
                 //IR_D.Decode(this.IR);
@@ -649,7 +668,7 @@ namespace GeminiCore
                 //{
                 //    decodeEvent.WaitOne();
                 //}
-                Console.WriteLine("instructionS in decode: " + instructionS);
+                //Console.WriteLine("instructionS in decode: " + instructionS);
                 dispDecodeInstr = findInstruction(instructionS);
                 string instr = "";
                 char imm = ' ';
@@ -751,7 +770,7 @@ namespace GeminiCore
 
         public void Execute()
         {
-            while (!lastExecute)
+            while (!areWeDone)
             {
                 executeEvent.WaitOne();
 
@@ -969,7 +988,7 @@ namespace GeminiCore
                         MAR = "- - - - - - ";
                         MDR = "- - - - - - ";
                         mainMemory.HitorMiss = "";
-                        finished = true;
+                        //finished = true;
                         PC = 0;
                         break;
                 }
@@ -987,7 +1006,7 @@ namespace GeminiCore
 
         public void Store()
         {
-            while (!lastStore)
+            while (!areWeDone)
             {
                 storeEvent.WaitOne();
 
@@ -995,7 +1014,7 @@ namespace GeminiCore
                 if (lastExecute == true)
                 {
                     lastStore = true;
-                    finished = true;
+                    //finished = true;
                 }
                 dispStoreInstr = findInstruction(storage.instruction);
                 Boolean imm = false;
@@ -1222,7 +1241,7 @@ namespace GeminiCore
                     }
                     #endregion
                 }
-                /*
+                
                 if (finished)
                 {
                     fetchEvent.Reset();
@@ -1230,11 +1249,12 @@ namespace GeminiCore
                     executeEvent.Reset();
                     storeEvent.Reset();
                 }
-                */
+                
                 //storeEvent.WaitOne();
 
                 //executeEvent.Set();
             }
+            //finished = true;
         }
 
     }
