@@ -39,6 +39,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="OperationEventArgs.cs" />
     <Compile Include="CPU.cs" />
     <Compile Include="IPE.cs" />
     <Compile Include="Memory.cs" />

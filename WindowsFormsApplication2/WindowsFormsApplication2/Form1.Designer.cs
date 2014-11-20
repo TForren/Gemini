@@ -42,7 +42,6 @@
             this.ZeroLabel = new System.Windows.Forms.Label();
             this.BLabel = new System.Windows.Forms.Label();
             this.ALabel = new System.Windows.Forms.Label();
-            this.BackgroundPicBox = new System.Windows.Forms.PictureBox();
             this.nextInstructionDisplayLabel = new System.Windows.Forms.Label();
             this.runAllButton = new System.Windows.Forms.Button();
             this.MissCountLabel = new System.Windows.Forms.Label();
@@ -55,10 +54,17 @@
             this.DecodeDisplayLabel = new System.Windows.Forms.Label();
             this.ExecuteDisplayLabel = new System.Windows.Forms.Label();
             this.StoreDisplayLabel = new System.Windows.Forms.Label();
-            ((System.ComponentModel.ISupportInitialize)(this.BackgroundPicBox)).BeginInit();
+            this.BackgroundPicBox = new System.Windows.Forms.PictureBox();
+            this.HazardOFF = new System.Windows.Forms.PictureBox();
+            this.pictureBox2 = new System.Windows.Forms.PictureBox();
+            this.HazardON = new System.Windows.Forms.PictureBox();
             this.tableLayoutPanel3.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.BackgroundPicBox)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.HazardOFF)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.HazardON)).BeginInit();
             this.SuspendLayout();
             // 
             // accLabel
@@ -245,17 +251,6 @@
             this.ALabel.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             this.ALabel.Click += new System.EventHandler(this.label12_Click);
             // 
-            // BackgroundPicBox
-            // 
-            this.BackgroundPicBox.BackColor = System.Drawing.SystemColors.InactiveCaptionText;
-            this.BackgroundPicBox.Image = ((System.Drawing.Image)(resources.GetObject("BackgroundPicBox.Image")));
-            this.BackgroundPicBox.Location = new System.Drawing.Point(-12, -14);
-            this.BackgroundPicBox.Name = "BackgroundPicBox";
-            this.BackgroundPicBox.Size = new System.Drawing.Size(563, 647);
-            this.BackgroundPicBox.TabIndex = 5;
-            this.BackgroundPicBox.TabStop = false;
-            this.BackgroundPicBox.Click += new System.EventHandler(this.pictureBox1_Click);
-            // 
             // nextInstructionDisplayLabel
             // 
             this.nextInstructionDisplayLabel.AutoSize = true;
@@ -364,7 +359,6 @@
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel3.Size = new System.Drawing.Size(88, 198);
             this.tableLayoutPanel3.TabIndex = 26;
-            this.tableLayoutPanel3.Paint += new System.Windows.Forms.PaintEventHandler(this.tableLayoutPanel3_Paint);
             // 
             // tableLayoutPanel1
             // 
@@ -378,6 +372,7 @@
             this.tableLayoutPanel1.RowCount = 2;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel1.Size = new System.Drawing.Size(109, 91);
             this.tableLayoutPanel1.TabIndex = 27;
             // 
@@ -387,11 +382,11 @@
             this.tableLayoutPanel2.ColumnCount = 1;
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel2.Controls.Add(this.nextInstructionDisplayLabel, 0, 0);
-            this.tableLayoutPanel2.Location = new System.Drawing.Point(63, 132);
+            this.tableLayoutPanel2.Location = new System.Drawing.Point(66, 132);
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
             this.tableLayoutPanel2.RowCount = 1;
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 27F));
             this.tableLayoutPanel2.Size = new System.Drawing.Size(129, 27);
             this.tableLayoutPanel2.TabIndex = 28;
             // 
@@ -399,48 +394,94 @@
             // 
             this.FetchDisplayLabel.AutoSize = true;
             this.FetchDisplayLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.FetchDisplayLabel.Location = new System.Drawing.Point(129, 405);
+            this.FetchDisplayLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
+            this.FetchDisplayLabel.Location = new System.Drawing.Point(102, 405);
             this.FetchDisplayLabel.Name = "FetchDisplayLabel";
-            this.FetchDisplayLabel.Size = new System.Drawing.Size(51, 20);
+            this.FetchDisplayLabel.Size = new System.Drawing.Size(99, 20);
             this.FetchDisplayLabel.TabIndex = 29;
-            this.FetchDisplayLabel.Text = "label1";
+            this.FetchDisplayLabel.Text = "- - - - - - - - - - ";
             // 
             // DecodeDisplayLabel
             // 
             this.DecodeDisplayLabel.AutoSize = true;
             this.DecodeDisplayLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.DecodeDisplayLabel.Location = new System.Drawing.Point(162, 537);
+            this.DecodeDisplayLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
+            this.DecodeDisplayLabel.Location = new System.Drawing.Point(145, 537);
             this.DecodeDisplayLabel.Name = "DecodeDisplayLabel";
-            this.DecodeDisplayLabel.Size = new System.Drawing.Size(51, 20);
+            this.DecodeDisplayLabel.Size = new System.Drawing.Size(99, 20);
             this.DecodeDisplayLabel.TabIndex = 30;
-            this.DecodeDisplayLabel.Text = "label1";
+            this.DecodeDisplayLabel.Text = "- - - - - - - - - - ";
             this.DecodeDisplayLabel.Click += new System.EventHandler(this.label1_Click_1);
             // 
             // ExecuteDisplayLabel
             // 
             this.ExecuteDisplayLabel.AutoSize = true;
             this.ExecuteDisplayLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ExecuteDisplayLabel.Location = new System.Drawing.Point(342, 465);
+            this.ExecuteDisplayLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
+            this.ExecuteDisplayLabel.Location = new System.Drawing.Point(324, 465);
             this.ExecuteDisplayLabel.Name = "ExecuteDisplayLabel";
-            this.ExecuteDisplayLabel.Size = new System.Drawing.Size(51, 20);
+            this.ExecuteDisplayLabel.Size = new System.Drawing.Size(99, 20);
             this.ExecuteDisplayLabel.TabIndex = 31;
-            this.ExecuteDisplayLabel.Text = "label1";
+            this.ExecuteDisplayLabel.Text = "- - - - - - - - - - ";
             // 
             // StoreDisplayLabel
             // 
             this.StoreDisplayLabel.AutoSize = true;
             this.StoreDisplayLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.StoreDisplayLabel.Location = new System.Drawing.Point(375, 580);
+            this.StoreDisplayLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
+            this.StoreDisplayLabel.Location = new System.Drawing.Point(347, 580);
             this.StoreDisplayLabel.Name = "StoreDisplayLabel";
-            this.StoreDisplayLabel.Size = new System.Drawing.Size(51, 20);
+            this.StoreDisplayLabel.Size = new System.Drawing.Size(99, 20);
             this.StoreDisplayLabel.TabIndex = 32;
-            this.StoreDisplayLabel.Text = "label1";
+            this.StoreDisplayLabel.Text = "- - - - - - - - - - ";
+            // 
+            // BackgroundPicBox
+            // 
+            this.BackgroundPicBox.AccessibleRole = System.Windows.Forms.AccessibleRole.SplitButton;
+            this.BackgroundPicBox.BackColor = System.Drawing.SystemColors.InactiveCaptionText;
+            this.BackgroundPicBox.Image = ((System.Drawing.Image)(resources.GetObject("BackgroundPicBox.Image")));
+            this.BackgroundPicBox.Location = new System.Drawing.Point(-12, -14);
+            this.BackgroundPicBox.Name = "BackgroundPicBox";
+            this.BackgroundPicBox.Size = new System.Drawing.Size(563, 684);
+            this.BackgroundPicBox.TabIndex = 5;
+            this.BackgroundPicBox.TabStop = false;
+            this.BackgroundPicBox.Click += new System.EventHandler(this.pictureBox1_Click);
+            // 
+            // HazardOFF
+            // 
+            this.HazardOFF.Image = ((System.Drawing.Image)(resources.GetObject("HazardOFF.Image")));
+            this.HazardOFF.Location = new System.Drawing.Point(133, 574);
+            this.HazardOFF.Name = "HazardOFF";
+            this.HazardOFF.Size = new System.Drawing.Size(134, 51);
+            this.HazardOFF.TabIndex = 33;
+            this.HazardOFF.TabStop = false;
+            // 
+            // pictureBox2
+            // 
+            this.pictureBox2.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox2.Image")));
+            this.pictureBox2.Location = new System.Drawing.Point(133, 574);
+            this.pictureBox2.Name = "pictureBox2";
+            this.pictureBox2.Size = new System.Drawing.Size(134, 51);
+            this.pictureBox2.TabIndex = 34;
+            this.pictureBox2.TabStop = false;
+            // 
+            // HazardON
+            // 
+            this.HazardON.Image = ((System.Drawing.Image)(resources.GetObject("HazardON.Image")));
+            this.HazardON.Location = new System.Drawing.Point(130, 573);
+            this.HazardON.Name = "HazardON";
+            this.HazardON.Size = new System.Drawing.Size(136, 51);
+            this.HazardON.TabIndex = 35;
+            this.HazardON.TabStop = false;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(540, 628);
+            this.ClientSize = new System.Drawing.Size(540, 627);
+            this.Controls.Add(this.HazardON);
+            this.Controls.Add(this.pictureBox2);
+            this.Controls.Add(this.HazardOFF);
             this.Controls.Add(this.StoreDisplayLabel);
             this.Controls.Add(this.ExecuteDisplayLabel);
             this.Controls.Add(this.DecodeDisplayLabel);
@@ -458,14 +499,17 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "Form1";
-            this.Text = "Best Gemini Microprocessor Ever    (╯°Д°）╯︵ ┻━┻";
-            ((System.ComponentModel.ISupportInitialize)(this.BackgroundPicBox)).EndInit();
+            this.Text = "Best Gemini Microprocessor Ever ";
             this.tableLayoutPanel3.ResumeLayout(false);
             this.tableLayoutPanel3.PerformLayout();
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
             this.tableLayoutPanel2.ResumeLayout(false);
             this.tableLayoutPanel2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.BackgroundPicBox)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.HazardOFF)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.HazardON)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -476,7 +520,6 @@
         private System.Windows.Forms.Label accLabel;
         private System.Windows.Forms.Button loadFileButton;
         private System.Windows.Forms.Button nextInstructionButton;
-        private System.Windows.Forms.PictureBox BackgroundPicBox;
         private System.Windows.Forms.Label ALabel;
         private System.Windows.Forms.Label OneLabel;
         private System.Windows.Forms.Label ZeroLabel;
@@ -499,6 +542,10 @@
         private System.Windows.Forms.Label DecodeDisplayLabel;
         private System.Windows.Forms.Label ExecuteDisplayLabel;
         private System.Windows.Forms.Label StoreDisplayLabel;
+        private System.Windows.Forms.PictureBox BackgroundPicBox;
+        private System.Windows.Forms.PictureBox HazardOFF;
+        private System.Windows.Forms.PictureBox pictureBox2;
+        private System.Windows.Forms.PictureBox HazardON;
     }
 }
 

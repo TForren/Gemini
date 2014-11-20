@@ -98,6 +98,7 @@ namespace WindowsFormsApplication2
                     {
                         var ipe = new IPE(ofd.FileName);
                         List<string> binary = ipe.ParseFile();
+                        myCPU.setNumInstLeft(binary.Count);
                         //for (int i = 0; i < binary.Count; i++)
                         //{
                         //    Console.WriteLine("parser at " + i + ": " + binary[i]);
@@ -229,6 +230,18 @@ namespace WindowsFormsApplication2
             this.HitCountLabel.Text = Convert.ToString(this.myCPU.getMainMemory().HITCOUNT);
             this.MissCountLabel.Text = Convert.ToString(this.myCPU.getMainMemory().MISSCOUNT);
             this.MissOrHitLabel.Text = myCPU.getMainMemory().HitorMiss;
+
+            if (myCPU.hazard || myCPU.loadHazard)
+            {
+                HazardOFF.Visible = false;
+                HazardON.Visible = true;
+            }
+            else
+            {
+                HazardOFF.Visible = true;
+                HazardON.Visible = false;
+            }
+
         }
 
 
@@ -355,10 +368,10 @@ namespace WindowsFormsApplication2
 
         }
 
-        private void tableLayoutPanel3_Paint(object sender, PaintEventArgs e)
-        {
+      //  private void tableLayoutPanel3_Paint(object sender, PaintEventArgs e)
+      //  {
 
-        }
+       // }
 
         private void label1_Click_1(object sender, EventArgs e)
         {
